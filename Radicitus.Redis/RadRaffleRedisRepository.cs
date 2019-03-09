@@ -17,7 +17,7 @@ namespace Radicitus.Redis
             _connection = connection;
         }
 
-        public async Task<RadRaffle> GetRaffleBuGuid(string guid)
+        public async Task<RadRaffle> GetRaffleByGuid(string guid)
         {
             var raffleJson = await _connection.GetDatabase().StringGetAsync(guid);
             return JsonConvert.DeserializeObject<RadRaffle>(raffleJson);
@@ -35,12 +35,30 @@ namespace Radicitus.Redis
 
         public void PushNewWinnerForRaffle(string raffleName, string winnerName)
         {
-            throw new NotImplementedException();
+            _connection.GetDatabase().ListRightPush("winners", $"{raffleName} - {winnerName}");
         }
 
         public List<string> GetWinnersOfRaffles()
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<string> SetGetTest(string key, string value)
+        {
+            await _connection.GetDatabase().StringSetAsync(key, value);
+            return await _connection.GetDatabase().StringGetAsync(key);
+        }
+
+        public void CreateRadRaffle(RadRaffle raffle)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<RadRaffle> GetLatestRadRaffle()
+        {
+            var raffleLength = await _connection.GetDatabase().ListLengthAsync("raffles");
+            var lastRaffle = await _connection.GetDatabase().ListGetByIndexAsync("raffles", raffleLength);
+            return JsonConvert.DeserializeObject<RadRaffle>(lastRaffle);
         }
     }
 }

@@ -7,10 +7,13 @@ namespace Radicitus.Redis
 {
     public interface IRaffleRepository
     {
-        Task<RadRaffle> GetRaffleBuGuid(string guid);
+        Task<RadRaffle> GetRaffleByGuid(string guid);
         Task<List<RaffleNumber>> GetRadRafflesByRaffleGuid(string guid);
         List<RadRaffle> GetRadRaffles();
         void PushNewWinnerForRaffle(string raffleName, string winnerName);
         List<string> GetWinnersOfRaffles();
+        Task<string> SetGetTest(string key, string value);
+        void CreateRadRaffle(RadRaffle raffle);
+        Task<RadRaffle> GetLatestRadRaffle();
     }
 }
