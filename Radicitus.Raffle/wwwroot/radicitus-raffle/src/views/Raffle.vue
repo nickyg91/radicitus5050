@@ -33,7 +33,7 @@
                             <input type="text" class="input" v-model="squareName" placeholder="Put your name here" />
                         </div>
                     </div>
-                    <button @click="isNameModalActive = false" :disabled="squareName.length === 0" class="button is-info is-large">
+                    <button @click="acceptName" :disabled="squareName.length === 0" class="button is-info is-large">
                         Accept
                     </button>
                 </div>
@@ -60,7 +60,7 @@ export default class Raffle extends Vue {
     public squareName = '';
     public isNameModalActive = false;
     public selectedSquares = new Array<number>();
-    private hubConnection: HubConnection = null;
+    public hubConnection: HubConnection;
     public squareClicked(square: Square) {
         const indexOfClickedNumber = this.selectedSquares.indexOf(square.$props.squareNumber);
         if (this.selectedSquares.length < this.maxSquares && indexOfClickedNumber < 0) {
@@ -80,22 +80,23 @@ export default class Raffle extends Vue {
     }
 
     public acceptName() {
-        this.$store.commit('currentUser', this.squareName);
+        this.hubConnection =  new HubConnectionBuilder().withUrl(`http://localhost:53561/rafflehub?username=${this.squareName}&raffleguid=${this.$route.params['guid']}`).build();
+        this.isNameModalActive = false;
+        this.hubConnection.start();
+            this.hubConnection.on('sendNumbers', (result) => {
+                const childSquare = this.$children.filter((x) => x.$props.squareNumber === result.Number)[0];
+                if (childSquare) {
+                    childSquare.$set(childSquare, 'squareName', result.Name);
+                    childSquare.$el.classList.add('selected');
+                }
+            });
+        this.$store.commit('setUser', this.squareName);
     }
 
     public mounted() {
         const hasUsernameBeenSet = this.$store.getters.currentUser;
         if (!hasUsernameBeenSet) {
             this.isNameModalActive = true;
-            this.hubConnection = new HubConnectionBuilder().withUrl('/rafflehub').build();
-            this.hubConnection.start();
-            this.hubConnection.on('sendNumbers', (result) => {
-                var childSquare = this.$children.filter(x => x.$props.squareNumber === result.Number)[0];
-                if (childSquare) {
-                    childSquare.$set(childSquare, 'squareName', result.Name);
-                    childSquare.$el.classList.add('selected');
-                }
-            });
         }
     }
 }
