@@ -15,5 +15,7 @@ namespace Radicitus.Redis
         Task<string> SetGetTest(string key, string value);
         void CreateRadRaffle(RadRaffle raffle);
         Task<RadRaffle> GetLatestRadRaffle();
+        void PushUserNumberForRaffle(RaffleNumberSelection selection, string raffleGuid);
+        void RemoveUserNumberForRaffle(RaffleNumberSelection selection, string raffleGuid);
     }
 }

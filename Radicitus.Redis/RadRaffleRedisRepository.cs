@@ -60,5 +60,16 @@ namespace Radicitus.Redis
             var lastRaffle = await _connection.GetDatabase().ListGetByIndexAsync("raffles", raffleLength);
             return JsonConvert.DeserializeObject<RadRaffle>(lastRaffle);
         }
+
+        public void PushUserNumberForRaffle(RaffleNumberSelection selection, string raffleGuid)
+        {
+            _connection.GetDatabase()
+                .ListRightPush($"{selection.Name}:{raffleGuid}", selection.Number);
+        }
+
+        public void RemoveUserNumberForRaffle(RaffleNumberSelection selection, string raffleGuid)
+        {
+            _connection.GetDatabase().ListRemove($"{selection.Name}:{raffleGuid}", selection.Number);
+        }
     }
 }

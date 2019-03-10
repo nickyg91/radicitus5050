@@ -20,10 +20,10 @@ namespace Radicitus.Raffle.Controllers
             _raffleRepo = raffleRepo;
         }
 
-        public async Task<IActionResult> CreateRaffle(RadRaffle raffle)
-        {
+        //public async Task<IActionResult> CreateRaffle(RadRaffle raffle)
+        //{
             
-        }
+        //}
 
         [HttpPost("test")]
         public async Task<IActionResult> RedisTest()

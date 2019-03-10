@@ -12,6 +12,7 @@
     "@fortawesome/free-brands-svg-icons": "^5.7.2",
     "@fortawesome/free-regular-svg-icons": "^5.7.2",
     "@fortawesome/free-solid-svg-icons": "^5.7.2",
+    "@aspnet/signalr": "1.1.2",
     "@fortawesome/vue-fontawesome": "^0.1.5",
     "@types/webpack-env": "^1.13.9",
     "axios": "^0.18.0",

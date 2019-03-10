@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Radicitus.Raffle.Hubs;
 using Radicitus.Redis;
 using StackExchange.Redis;
 
@@ -43,9 +44,10 @@ namespace Radicitus.Raffle
             }
 
             app.UseMvc();
-            app.UseSignalR(new Action<HubRouteBuilder>((cfg) =>
+            app.UseSignalR(cfg =>
             {
-            }));
+                cfg.MapHub<RaffleHub>("/rafflehub");
+            });
         }
     }
 }

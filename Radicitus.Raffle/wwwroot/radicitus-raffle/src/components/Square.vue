@@ -1,3 +1,12 @@
+<style lang="scss" scoped>
+    @import "~bulma/sass/utilities/_all";
+    .box:hover {
+        cursor: pointer;
+        color: white;
+        background-color: $grey-dark,
+
+    }
+</style>
 <template>
     <div @click="clicked" class="box">
         <div>
