@@ -53,9 +53,14 @@ export default class Raffle extends Vue {
     public isNameModalActive = false;
     public selectedSquares = new Array<number>();
     public squareClicked(square: Square) {
-        if (this.selectedSquares.length !== this.maxSquares) {
+        const indexOfClickedNumber = this.selectedSquares.indexOf(square.$props.squareNumber);
+        if (this.selectedSquares.length !== this.maxSquares && indexOfClickedNumber < 0) {
             this.selectedSquares.push(square.$props.squareNumber);
             square.$set(square, 'squareName', this.squareName);
+        }
+        if (indexOfClickedNumber > -1) {
+            this.selectedSquares.splice(indexOfClickedNumber, 1);
+            square.$set(square, 'squareName', '');
         }
     }
 
