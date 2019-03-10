@@ -7,6 +7,31 @@
                 </div>
             </div>
         </div>
+        <b-modal :can-cancel="false" :active.sync="isNameModalActive">
+            <div class="box">
+                <div class="has-text-centered">
+                    <font-awesome-icon class="is-size-1 has-text-danger" icon="exclamation-circle"></font-awesome-icon>
+                    <p class="is-size-3">
+                        Looks like we don't know you?
+                    </p>
+                </div>
+                <div class="has-text-centered">
+                    <p class="is-size-5">
+                        Tell us who you are so you can pick your numbers.
+                    </p> 
+                </div>
+                <div class="has-text-centered">
+                    <div class="field">
+                        <div class="control">
+                            <input type="text" class="input" v-model="squareName" placeholder="Put your name here" />
+                        </div>
+                    </div>
+                    <button @click="isNameModalActive = false" :disabled="squareName.length === 0" class="button is-info is-large">
+                        Accept
+                    </button>
+                </div>
+            </div>
+        </b-modal>
     </div>
 </template>
 <script lang="ts">
@@ -24,19 +49,24 @@ export default class Raffle extends Vue {
     public numberOfRows = 10;
     public squaresPerRow = 10;
     public maxSquares = 5;
-    public squareName = 'test';
+    public squareName = '';
+    public isNameModalActive = false;
     public selectedSquares = new Array<number>();
     public squareClicked(square: Square) {
-        console.log(square);
         if (this.selectedSquares.length !== this.maxSquares) {
             this.selectedSquares.push(square.$props.squareNumber);
-            square.$set(square, 'squareName', 'test');
+            square.$set(square, 'squareName', this.squareName);
         }
     }
+
+    public acceptName() {
+        this.$store.commit('currentUser', this.squareName);
+    }
+
     public mounted() {
-        const hasUsernameBeenSet = this.$store.getters.currentUser !== null;
+        const hasUsernameBeenSet = this.$store.getters.currentUser;
         if (!hasUsernameBeenSet) {
-            // show modal here
+            this.isNameModalActive = true;
         }
     }
 }

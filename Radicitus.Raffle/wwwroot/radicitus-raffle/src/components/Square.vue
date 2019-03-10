@@ -5,7 +5,7 @@
                 {{num}}
             </div>
             <div class="has-text-centered">
-                {{name}}
+                {{name.length === 0 ? '&nbsp;' : name}}
             </div>
         </div>
     </div>
