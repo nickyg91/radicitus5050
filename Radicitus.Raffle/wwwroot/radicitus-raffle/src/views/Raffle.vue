@@ -82,14 +82,16 @@ export default class Raffle extends Vue {
     public acceptName() {
         this.hubConnection =  new HubConnectionBuilder().withUrl(`http://localhost:53561/rafflehub?username=${this.squareName}&raffleguid=${this.$route.params['guid']}`).build();
         this.isNameModalActive = false;
+        this.hubConnection.on('SendNumbers', (result) => {
+            console.log(result);
+            const childSquare = this.$children.filter((x) => x.$props.squareNumber === result.Number)[0];
+            if (childSquare) {
+                childSquare.$set(childSquare, 'squareName', result.Name);
+                childSquare.$el.classList.add('selected');
+            }
+        });
         this.hubConnection.start();
-            this.hubConnection.on('sendNumbers', (result) => {
-                const childSquare = this.$children.filter((x) => x.$props.squareNumber === result.Number)[0];
-                if (childSquare) {
-                    childSquare.$set(childSquare, 'squareName', result.Name);
-                    childSquare.$el.classList.add('selected');
-                }
-            });
+        
         this.$store.commit('setUser', this.squareName);
     }
 

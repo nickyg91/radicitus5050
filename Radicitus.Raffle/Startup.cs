@@ -28,6 +28,7 @@ namespace Radicitus.Raffle
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             var connectionMultiplexer = ConnectionMultiplexer.Connect(
                 "50.116.16.215");
@@ -43,6 +44,13 @@ namespace Radicitus.Raffle
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCors(pol =>
+            {
+                pol.WithOrigins("http://localhost:8080")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            });
             app.UseMvc();
             app.UseSignalR(cfg =>
             {
