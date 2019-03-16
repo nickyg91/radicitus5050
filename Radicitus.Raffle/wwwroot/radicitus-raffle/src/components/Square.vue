@@ -24,7 +24,7 @@ import { Component, Prop, Vue, Model } from 'vue-property-decorator';
 @Component
 export default class Square extends Vue {
     @Prop(Number) public squareNumber!: number;
-    public name = '';
+    name = '';
     private _squareTakenBy!: string;
     private _squareNumber!: number;
     private clicked() {

@@ -8,9 +8,12 @@
 <template>
     <div class="section">
         <div class="container">
-            <div v-for="number in numberOfRows" :key="number" class="columns">
-                <div v-for="n in squaresPerRow" :key="n" class="column">
-                    <Square :key="n * number" v-on:square-clicked="squareClicked" v-bind:squareNumber="n * number" />
+            <div v-for="square in Math.ceil(squares.length / 10)" :key="square" class="columns">
+                <div v-for="squareCol in squares.slice((square - 1) * 10, square * 10)" :key="squareCol" class="column">
+                    <Square :class="{ selected: takenSquares.indexOf(squareCol) > -1 }" 
+                        :key="squareCol" 
+                        v-on:square-clicked="squareClicked" 
+                        v-bind:squareNumber="squareCol" />
                 </div>
             </div>
         </div>
@@ -45,7 +48,7 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import Square from '@/components/Square.vue';
-import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@aspnet/signalr'
+import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@aspnet/signalr';
 @Component({
   components: {
     Raffle,
@@ -53,6 +56,7 @@ import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@aspnet
   },
 })
 export default class Raffle extends Vue {
+    public squares = Array.from(Array(100).keys()).map((x) => x + 1);
     public totalSquares = 100;
     public numberOfRows = 10;
     public squaresPerRow = 10;
@@ -60,38 +64,53 @@ export default class Raffle extends Vue {
     public squareName = '';
     public isNameModalActive = false;
     public selectedSquares = new Array<number>();
+    public takenSquares = new Array<number>();
     public hubConnection: HubConnection;
     public squareClicked(square: Square) {
+        const isSquareAlreadyTakenBySomeoneElse = this.takenSquares.indexOf(square.$props.squareNumber) > -1;
         const indexOfClickedNumber = this.selectedSquares.indexOf(square.$props.squareNumber);
-        if (this.selectedSquares.length < this.maxSquares && indexOfClickedNumber < 0) {
+        const doIHaveThisNumber = indexOfClickedNumber > -1;
+        if (doIHaveThisNumber) {
+            this.selectedSquares.splice(indexOfClickedNumber, 1);
+            square.$set(square, 'squareName', '');
+            square.$el.classList.remove('selected');
+            this.hubConnection.invoke('BroadcastSelectedNumbersToRaffleGroup', {
+                Name: this.squareName,
+                Number: square.$props.squareNumber,
+                IsRemoved: true
+            });
+        } else if(!isSquareAlreadyTakenBySomeoneElse && this.selectedSquares.length < this.maxSquares) {
             this.selectedSquares.push(square.$props.squareNumber);
             square.$set(square, 'squareName', this.squareName);
             square.$el.classList.add('selected');
             this.hubConnection.invoke('BroadcastSelectedNumbersToRaffleGroup', {
-                'Name': this.squareName,
-                'Number': square.$props.squareNumber
+                Name: this.squareName,
+                Number: square.$props.squareNumber,
+                IsRemoved: false
             });
-        }
-        if (indexOfClickedNumber > -1) {
-            this.selectedSquares.splice(indexOfClickedNumber, 1);
-            square.$set(square, 'squareName', '');
-            square.$el.classList.remove('selected');
         }
     }
 
     public acceptName() {
-        this.hubConnection =  new HubConnectionBuilder().withUrl(`http://localhost:53561/rafflehub?username=${this.squareName}&raffleguid=${this.$route.params['guid']}`).build();
+        this.hubConnection =  new HubConnectionBuilder()
+        .withUrl(`http://localhost:51135/rafflehub?username=${this.squareName}&raffleguid=${this.$route.params.guid}`)
+        .build();
         this.isNameModalActive = false;
+        const vueContext = this;
         this.hubConnection.on('SendNumbers', (result) => {
-            console.log(result);
-            const childSquare = this.$children.filter((x) => x.$props.squareNumber === result.Number)[0];
-            if (childSquare) {
-                childSquare.$set(childSquare, 'squareName', result.Name);
+            const childSquare = vueContext.$children.filter((x) => x.$props.squareNumber === result.number)[0];
+            if (result.isRemoved) {
+                const idxOfRemovedNumber = vueContext.takenSquares.indexOf(result.number);
+                vueContext.takenSquares.splice(idxOfRemovedNumber, 1);
+                childSquare.$set(childSquare, 'squareName', '');
+                childSquare.$el.classList.remove('selected');
+            } else {
+                childSquare.$set(childSquare, 'squareName', result.name);
+                vueContext.takenSquares.push(result.number);
                 childSquare.$el.classList.add('selected');
             }
         });
         this.hubConnection.start();
-        
         this.$store.commit('setUser', this.squareName);
     }
 

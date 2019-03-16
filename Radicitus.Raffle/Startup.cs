@@ -30,8 +30,9 @@ namespace Radicitus.Raffle
         {
             services.AddCors();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            var connectionMultiplexer = ConnectionMultiplexer.Connect(
-                "50.116.16.215");
+            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            var redisConnection = "localhost";
+            var connectionMultiplexer = ConnectionMultiplexer.Connect(redisConnection);
             services.AddSingleton<IRaffleRepository>(new RadRaffleRedisRepository(connectionMultiplexer));
             services.AddSignalR();
         }
@@ -43,13 +44,12 @@ namespace Radicitus.Raffle
             {
                 app.UseDeveloperExceptionPage();
             }
-
             app.UseCors(pol =>
             {
-                pol.WithOrigins("http://localhost:8080")
+                pol.AllowAnyOrigin()
                     .AllowAnyHeader()
                     .AllowAnyMethod()
-                    .AllowCredentials();
+                    .AllowCredentials().WithOrigins("http://localhost:8080");
             });
             app.UseMvc();
             app.UseSignalR(cfg =>
