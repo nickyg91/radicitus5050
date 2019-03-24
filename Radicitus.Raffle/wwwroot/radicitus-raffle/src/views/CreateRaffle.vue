@@ -62,8 +62,9 @@
           </div>
         </div>
       </section>
-      <section class="has-text-centered" v-if="raffle.RaffleGuid">
-        {{raffle.RaffleGuid}}
+      <section class="has-text-centered" v-if="raffle.RaffleGuid && raffle.RaffleGuid.length > 0">
+        <div>Distribute this url for the 50/50 raffle to everyone.</div>
+        <div>https://radicitusguild.us/raffle/{{raffle.RaffleGuid}}</div>
       </section>
       <b-loading :is-full-page="true" :active.sync="isLoading" :can-cancel="false"></b-loading>
   </div>
@@ -86,7 +87,8 @@ export default class CreateRaffle extends Vue {
     if (isValid) {
         try {
           this.isLoading = true;
-          const addedRaffle = await this.radServices.createRaffle(this.raffle);
+          const resp = await this.radServices.createRaffle(this.raffle);
+          this.raffle.RaffleGuid = resp.data.RaffleGuid;
         } catch(ex) {
 
         } finally {

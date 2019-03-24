@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Serialization;
 using Radicitus.Raffle.Hubs;
 using Radicitus.Redis;
 using StackExchange.Redis;
@@ -29,7 +30,8 @@ namespace Radicitus.Raffle
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .AddJsonOptions(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver());
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             var redisConnection = "localhost";
             var connectionMultiplexer = ConnectionMultiplexer.Connect(redisConnection);
