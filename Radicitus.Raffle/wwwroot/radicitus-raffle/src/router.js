@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Raffle from './views/Raffle.vue';
+import Raffle from '@/views/Raffle.vue';
+import CreateRaffle from '@/views/CreateRaffle.vue';
 Vue.use(Router);
 export default new Router({
     mode: 'history',
@@ -10,6 +11,11 @@ export default new Router({
             path: '/raffle/:guid',
             name: 'raffle',
             component: Raffle,
+        },
+        {
+            path: '/raffle/guild/create',
+            name: 'create',
+            component: CreateRaffle,
         },
     ],
 });

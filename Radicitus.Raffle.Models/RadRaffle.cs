@@ -13,5 +13,7 @@ namespace Raffle.Models
         public decimal AmountWon { get; set; }
         public decimal SquareWorthAmount { get; set; }
         public int WinningSquare { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
     }
 }

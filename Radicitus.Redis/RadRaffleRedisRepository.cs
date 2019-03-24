@@ -51,13 +51,12 @@ namespace Radicitus.Redis
 
         public void CreateRadRaffle(RadRaffle raffle)
         {
-            throw new NotImplementedException();
+            _connection.GetDatabase().ListLeftPush("raffles", JsonConvert.SerializeObject(raffle));
         }
 
         public async Task<RadRaffle> GetLatestRadRaffle()
         {
-            var raffleLength = await _connection.GetDatabase().ListLengthAsync("raffles");
-            var lastRaffle = await _connection.GetDatabase().ListGetByIndexAsync("raffles", raffleLength);
+            var lastRaffle = await _connection.GetDatabase().ListGetByIndexAsync("raffles", 0);
             return JsonConvert.DeserializeObject<RadRaffle>(lastRaffle);
         }
 
