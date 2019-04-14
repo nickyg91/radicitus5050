@@ -18,5 +18,10 @@ export default new Router({
       name: 'create',
       component: CreateRaffle,
     },
+    {
+      path: '/raffles',
+      name: 'raffle',
+      component: CreateRaffle
+    }
   ],
 });

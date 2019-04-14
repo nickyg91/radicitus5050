@@ -49,6 +49,11 @@ namespace Radicitus.Raffle.Controllers
         {
             var rand = new Random();
             var randomInteger = rand.Next(1, 100);
+            var doWeHaveAWinner = _raffleRepo.GetWinnersOfRaffles();
+            if (doWeHaveAWinner.Contains(raffleGuid))
+            {
+                return 
+            }
             var raffle = await _raffleRepo.GetRaffleByGuid(raffleGuid);
             var potentialWinners = _raffleRepo.GetRadRafflesByRaffleGuid(raffleGuid);
             foreach (var potentialWinner in potentialWinners)
