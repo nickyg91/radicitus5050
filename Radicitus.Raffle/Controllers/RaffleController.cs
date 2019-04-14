@@ -61,5 +61,12 @@ namespace Radicitus.Raffle.Controllers
             }
             return Ok();
         }
+
+        [HttpGet("raffles")]
+        public IActionResult GetAllRaffles()
+        {
+            var raffles = _raffleRepo.GetRadRaffles();
+            return Ok(raffles);
+        }
     }
 }
