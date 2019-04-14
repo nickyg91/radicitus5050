@@ -8,7 +8,7 @@ namespace Radicitus.Redis
     public interface IRaffleRepository
     {
         Task<RadRaffle> GetRaffleByGuid(string guid);
-        Task<List<RaffleNumber>> GetRadRafflesByRaffleGuid(string guid);
+        IEnumerable<RaffleNumber> GetRadRafflesByRaffleGuid(string guid);
         List<RadRaffle> GetRadRaffles();
         void PushNewWinnerForRaffle(string raffleName, string winnerName);
         List<string> GetWinnersOfRaffles();

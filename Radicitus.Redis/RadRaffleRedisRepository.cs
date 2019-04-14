@@ -23,9 +23,13 @@ namespace Radicitus.Redis
             return JsonConvert.DeserializeObject<RadRaffle>(raffleJson);
         }
 
-        public async Task<List<RaffleNumber>> GetRadRafflesByRaffleGuid(string guid)
+        public IEnumerable<RaffleNumber> GetRadRafflesByRaffleGuid(string guid)
         {
-            throw new NotImplementedException();
+            var numbers = _connection.GetDatabase().ListRange($"{guid}:numbers");
+            foreach (var number in numbers)
+            {
+                yield return JsonConvert.DeserializeObject<RaffleNumber>(number);
+            }
         }
 
         public List<RadRaffle> GetRadRaffles()

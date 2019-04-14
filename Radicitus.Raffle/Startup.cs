@@ -51,7 +51,8 @@ namespace Radicitus.Raffle
                 pol.AllowAnyOrigin()
                     .AllowAnyHeader()
                     .AllowAnyMethod()
-                    .AllowCredentials().WithOrigins("http://localhost:8080");
+                    .AllowCredentials()
+                    .WithOrigins("http://localhost:8080");
             });
             app.UseMvc();
             app.UseSignalR(cfg =>
