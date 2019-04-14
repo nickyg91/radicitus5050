@@ -9,9 +9,9 @@ namespace Radicitus.Redis
     {
         Task<RadRaffle> GetRaffleByGuid(string guid);
         IEnumerable<RaffleNumber> GetRadRafflesByRaffleGuid(string guid);
-        List<RadRaffle> GetRadRaffles();
+        IEnumerable<RadRaffle> GetRadRaffles();
         void PushNewWinnerForRaffle(string raffleName, string winnerName);
-        List<string> GetWinnersOfRaffles();
+        IEnumerable<string> GetWinnersOfRaffles();
         Task<string> SetGetTest(string key, string value);
         void CreateRadRaffle(RadRaffle raffle);
         Task<RadRaffle> GetLatestRadRaffle();

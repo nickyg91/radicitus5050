@@ -32,9 +32,13 @@ namespace Radicitus.Redis
             }
         }
 
-        public List<RadRaffle> GetRadRaffles()
+        public IEnumerable<RadRaffle> GetRadRaffles()
         {
-            throw new NotImplementedException();
+            var raffles = _connection.GetDatabase().ListRange("raffles");
+            foreach (var raffle in raffles)
+            {
+                yield return JsonConvert.DeserializeObject<RadRaffle>(raffle);
+            }
         }
 
         public void PushNewWinnerForRaffle(string raffleName, string winnerName)
@@ -42,9 +46,13 @@ namespace Radicitus.Redis
             _connection.GetDatabase().ListRightPush("winners", $"{raffleName} - {winnerName}");
         }
 
-        public List<string> GetWinnersOfRaffles()
+        public IEnumerable<string> GetWinnersOfRaffles()
         {
-            throw new NotImplementedException();
+            var winners = _connection.GetDatabase().ListRange("winners");
+            foreach (var winner in winners)
+            {
+                yield return winner;
+            }
         }
 
         public async Task<string> SetGetTest(string key, string value)
