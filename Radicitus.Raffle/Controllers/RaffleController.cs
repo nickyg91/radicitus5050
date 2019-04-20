@@ -37,6 +37,13 @@ namespace Radicitus.Raffle.Controllers
             return Ok(raffleNumbers);
         }
 
+        [HttpGet("{raffleGuid}/{username}/numbers")]
+        public async Task<IActionResult> GetNumbersForRaffleUser(string raffleGuid, string username)
+        {
+            var raffleNumbers = await _raffleRepo.GetNumbersForUserInRaffle(raffleGuid, username);
+            return Ok(raffleNumbers);
+        }
+
         [HttpPost("test")]
         public async Task<IActionResult> RedisTest()
         {
@@ -50,20 +57,20 @@ namespace Radicitus.Raffle.Controllers
             var rand = new Random();
             var randomInteger = rand.Next(1, 100);
             var doWeHaveAWinner = _raffleRepo.GetWinnersOfRaffles();
-            if (doWeHaveAWinner.Contains(raffleGuid))
-            {
-                return Ok();
-            }
-            var raffle = await _raffleRepo.GetRaffleByGuid(raffleGuid);
-            var potentialWinners = _raffleRepo.GetRadRafflesByRaffleGuid(raffleGuid);
-            foreach (var potentialWinner in potentialWinners)
-            {
-                if (potentialWinner.Numbers.Contains(randomInteger))
-                {
-                    _raffleRepo.PushNewWinnerForRaffle(raffle.RaffleName, potentialWinner.Name);
-                    return Ok(potentialWinner);
-                }
-            }
+            // if (doWeHaveAWinner.Contains(raffleGuid))
+            // {
+            //     return Ok();
+            // }
+            // var raffle = await _raffleRepo.GetRaffleByGuid(raffleGuid);
+            // var potentialWinners = _raffleRepo.GetRadRafflesByRaffleGuid(raffleGuid);
+            // foreach (var potentialWinner in potentialWinners)
+            // {
+            //     if (potentialWinner.Numbers.Contains(randomInteger))
+            //     {
+            //         _raffleRepo.PushNewWinnerForRaffle(raffle.RaffleName, potentialWinner.Name);
+            //         return Ok(potentialWinner);
+            //     }
+            // }
             return Ok();
         }
 

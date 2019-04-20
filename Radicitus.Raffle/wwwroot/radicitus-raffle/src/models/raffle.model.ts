@@ -1,4 +1,4 @@
-import { RaffleNumber } from './raffle-number.model';
+import RaffleNumber from '@/models/raffle-number.model';
 
 export default class RadRaffle {
     public RaffleName: string;

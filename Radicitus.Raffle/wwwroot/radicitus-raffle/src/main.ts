@@ -15,13 +15,15 @@ import {
   faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import 'bulma/css/bulma.css';
 import VeeValidate from 'vee-validate';
-import RadService from '@/services/rad-raffle.service';
+import VueCookies from 'vue-cookies';
+
 library.add(faExclamationCircle, faCheck, faTimes, faCalendar, faCalendarDay, faAngleLeft, faAngleRight);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.use(Buefy, {
   defaultIconComponent: FontAwesomeIcon,
   defaultIconPack: 'fas',
 });
+Vue.use(VueCookies);
 Vue.use(VeeValidate, {
   classes: true,
   classNames: {

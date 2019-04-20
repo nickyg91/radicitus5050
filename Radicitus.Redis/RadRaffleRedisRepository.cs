@@ -23,12 +23,12 @@ namespace Radicitus.Redis
             return JsonConvert.DeserializeObject<RadRaffle>(raffleJson);
         }
 
-        public IEnumerable<RaffleNumber> GetRadRafflesByRaffleGuid(string guid)
+        public IEnumerable<RaffleNumberSelection> GetRadRafflesByRaffleGuid(string guid)
         {
             var numbers = _connection.GetDatabase().ListRange($"{guid}:numbers");
             foreach (var number in numbers)
             {
-                yield return JsonConvert.DeserializeObject<RaffleNumber>(number);
+                yield return JsonConvert.DeserializeObject<RaffleNumberSelection>(number);
             }
         }
 
@@ -74,6 +74,7 @@ namespace Radicitus.Redis
 
         public void PushUserNumberForRaffle(RaffleNumberSelection selection, string raffleGuid)
         {
+            _connection.GetDatabase().ListRightPush($"{raffleGuid}:numbers", JsonConvert.SerializeObject(selection));
             _connection.GetDatabase()
                 .ListRightPush($"{selection.Name}:{raffleGuid}", selection.Number);
         }
@@ -81,6 +82,17 @@ namespace Radicitus.Redis
         public void RemoveUserNumberForRaffle(RaffleNumberSelection selection, string raffleGuid)
         {
             _connection.GetDatabase().ListRemove($"{selection.Name}:{raffleGuid}", selection.Number);
+        }
+
+        public async Task<IEnumerable<string>> GetNumbersForUserInRaffle(string guid, string username)
+        {
+            var items = await _connection.GetDatabase().ListRangeAsync($"{username}:{guid}", 0);
+            var list = new List<string>();
+            foreach(var item in items)
+            {
+                list.Add(item);
+            }
+            return list;
         }
     }
 }
