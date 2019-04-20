@@ -52,7 +52,7 @@ namespace Radicitus.Raffle.Controllers
             var doWeHaveAWinner = _raffleRepo.GetWinnersOfRaffles();
             if (doWeHaveAWinner.Contains(raffleGuid))
             {
-                return 
+                return Ok();
             }
             var raffle = await _raffleRepo.GetRaffleByGuid(raffleGuid);
             var potentialWinners = _raffleRepo.GetRadRafflesByRaffleGuid(raffleGuid);
