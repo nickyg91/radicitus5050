@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import RaffleView from '@/views/Raffle.vue';
 import CreateRaffle from '@/views/CreateRaffle.vue';
+import Raffles from '@/views/Raffles.vue';
 Vue.use(Router);
 
 export default new Router({
@@ -20,8 +21,8 @@ export default new Router({
     },
     {
       path: '/raffles',
-      name: 'raffle',
-      component: CreateRaffle
+      name: 'raffles',
+      component: Raffles,
     }
   ],
 });

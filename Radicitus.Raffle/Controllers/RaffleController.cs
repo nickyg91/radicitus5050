@@ -78,6 +78,8 @@ namespace Radicitus.Raffle.Controllers
         public IActionResult GetAllRaffles()
         {
             var raffles = _raffleRepo.GetRadRaffles();
+            var totalWinnings = raffles.Select(x => x.AmountWon).Sum();
+            
             return Ok(raffles);
         }
     }

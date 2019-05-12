@@ -32,6 +32,13 @@ Vue.use(VeeValidate, {
   },
 });
 
+Vue.filter('formatDate', (value: any) => {
+  if (value) {
+    const d = new Date(value);
+    return `${d.getDay()}/${d.getMonth()}/${d.getFullYear()}`;
+  }
+});
+
 Vue.config.productionTip = false;
 new Vue({
   router,
