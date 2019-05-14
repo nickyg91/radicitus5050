@@ -18,7 +18,7 @@
                   <label class="label is-large">
                     Name
                   </label>
-                  <input v-validate="'required|alpha|min:5'" name="name" type="text" class="input" v-model="raffle.RaffleName"/>
+                  <input v-validate="'required|min:5'" name="name" type="text" class="input" v-model="raffle.RaffleName"/>
                 </div>
                 <div class="field">
                   <label class="label is-large">
@@ -75,9 +75,9 @@ import RadRaffle from '@/models/raffle.model';
 import RadRaffleService from '@/services/rad-raffle.service';
 @Component
 export default class CreateRaffle extends Vue {
+  public raffle: RadRaffle = new RadRaffle();
   private radServices: RadRaffleService = new RadRaffleService();
   private isLoading = false;
-  public raffle: RadRaffle = new RadRaffle();
   public mounted() {
     this.raffle.StartDate = new Date();
     this.raffle.EndDate = new Date();
@@ -89,8 +89,7 @@ export default class CreateRaffle extends Vue {
           this.isLoading = true;
           const resp = await this.radServices.createRaffle(this.raffle);
           this.raffle.RaffleGuid = resp.data.RaffleGuid;
-        } catch(ex) {
-
+        } catch (ex) {
         } finally {
           this.isLoading = false;
         }

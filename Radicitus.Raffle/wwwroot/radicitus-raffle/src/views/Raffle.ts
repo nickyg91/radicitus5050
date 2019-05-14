@@ -12,6 +12,7 @@ import { HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
   },
 })
 export default class RaffleView extends Vue {
+    public raffle: Raffle = this.$store.getters.selectedRaffle;
     public squares = Array.from(Array(100).keys()).map((x) => x + 1);
     public totalSquares = 100;
     public numberOfRows = 10;

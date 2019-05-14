@@ -1,5 +1,19 @@
 <template>
   <div id="app">
+    <nav class="navbar is-transparent is-dark">
+      <div class="navbar-brand">
+        <a class="navbar-item">
+          <img src="@/assets/Logo_Radicitus_White.png">
+        </a>
+      </div>
+      <div class="navbar-start">
+          <div class="navbar-item">
+            <a class="has-text-white" href="/raffles">
+              Raffles
+            </a>
+          </div>
+      </div>
+    </nav>
     <router-view></router-view>
   </div>
 </template>

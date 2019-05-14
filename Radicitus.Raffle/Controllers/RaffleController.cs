@@ -73,7 +73,7 @@ namespace Radicitus.Raffle.Controllers
             // }
             return Ok();
         }
-
+        
         [HttpGet("raffles")]
         public IActionResult GetAllRaffles()
         {

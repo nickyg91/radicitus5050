@@ -7,6 +7,9 @@
 </style>
 <template>
     <div class="section">
+        <div class="has-text-centered">
+            <p class="has-text-weight-bold is-size-2">{{raffle.RaffleName}}</p>
+        </div>
         <div class="container">
             <div v-for="square in Math.ceil(squares.length / 10)" :key="square" class="columns">
                 <div v-for="squareCol in squares.slice((square - 1) * 10, square * 10)" :key="squareCol" class="column">

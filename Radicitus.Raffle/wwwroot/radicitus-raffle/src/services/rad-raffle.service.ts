@@ -24,6 +24,12 @@ export default class RadRaffleService {
         });
     }
 
+    public async getRaffleByGuid(raffleGuid: string): Promise<AxiosResponse<RadRaffle>> {
+        return await axios.get(`${this.apiUrl}/api/raffle/${raffleGuid}`, {
+            headers: this.headers
+        });
+    }
+
     public async getRaffles(): Promise<AxiosResponse<RadRaffle[]>> {
         return await axios.get(`${this.apiUrl}/api/raffle/raffles`, {
             headers: this.headers
