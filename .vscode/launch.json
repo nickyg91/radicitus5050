@@ -35,8 +35,9 @@
             "type": "chrome",
             "request": "launch",
             "url": "http://localhost:8080/raffles",
-            "webRoot": "${workspaceFolder}/wwwroot/radicitus-raffle/src",
+            "webRoot": "${workspaceFolder}/Radicitus.Raffle/wwwroot/radicitus-raffle/src",
             "sourceMaps": true,
+            "breakOnLoad": true,
             "sourceMapPathOverrides": {
                 "webpack:///./src/*": "${webRoot}/*"
             }
