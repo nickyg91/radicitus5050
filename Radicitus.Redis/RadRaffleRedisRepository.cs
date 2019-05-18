@@ -65,7 +65,7 @@ namespace Radicitus.Redis
         public void CreateRadRaffle(RadRaffle raffle)
         {
             var serializedObject = JsonConvert.SerializeObject(raffle);
-            _connection.GetDatabase().ListLeftPush("raffles", serializedObject);
+            _connection.GetDatabase().ListLeftPush("raffles", raffle.RaffleGuid.ToString());
             _connection.GetDatabase().StringSet($"Raffle:{raffle.RaffleGuid.ToString()}", serializedObject);
         }
 
