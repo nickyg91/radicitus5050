@@ -56,22 +56,30 @@ namespace Radicitus.Raffle.Controllers
         {
             var rand = new Random();
             var randomInteger = rand.Next(1, 100);
-            var doWeHaveAWinner = _raffleRepo.GetWinnersOfRaffles();
-            // if (doWeHaveAWinner.Contains(raffleGuid))
-            // {
-            //     return Ok();
-            // }
-            // var raffle = await _raffleRepo.GetRaffleByGuid(raffleGuid);
-            // var potentialWinners = _raffleRepo.GetRadRafflesByRaffleGuid(raffleGuid);
-            // foreach (var potentialWinner in potentialWinners)
-            // {
-            //     if (potentialWinner.Numbers.Contains(randomInteger))
-            //     {
-            //         _raffleRepo.PushNewWinnerForRaffle(raffle.RaffleName, potentialWinner.Name);
-            //         return Ok(potentialWinner);
-            //     }
-            // }
-            return Ok();
+            var doWeHaveAWinner = _raffleRepo.GetRadRafflesByRaffleGuid(raffleGuid);
+            if (doWeHaveAWinner.Count() < 0)
+            {
+                return Ok(new RaffleNumberSelection 
+                {
+                    Name = null,
+                    Number = randomInteger
+                });
+            }
+            var winner = doWeHaveAWinner.FirstOrDefault(x => x.Number == randomInteger);
+            if (winner == null)
+            {
+                return Ok(new RaffleNumberSelection 
+                {
+                    Name = null,
+                    Number = randomInteger
+                });
+            }
+            var raffle = await _raffleRepo.GetRaffleByGuid(raffleGuid);
+            _raffleRepo.PushNewWinnerForRaffle(raffle.RaffleName, winner.Name);
+            raffle.WinnerName = winner.Name;
+            raffle.WinningSquare = winner.Number;
+            await _raffleRepo.UpdateRaffle(raffle);
+            return Ok(winner);
         }
         
         [HttpGet("raffles")]
