@@ -3,6 +3,7 @@ import Router from 'vue-router';
 import RaffleView from '@/views/Raffle.vue';
 import CreateRaffle from '@/views/CreateRaffle.vue';
 import Raffles from '@/views/Raffles.vue';
+import ChooseWinner from '@/views/ChooseWinner';
 Vue.use(Router);
 
 export default new Router({
@@ -23,6 +24,11 @@ export default new Router({
       path: '/raffles',
       name: 'raffles',
       component: Raffles,
-    }
+    },
+    {
+      path: '/choose/winner',
+      name: 'choosewinner',
+      component: ChooseWinner,
+    },
   ],
 });

@@ -19,5 +19,6 @@ namespace Radicitus.Redis
         void RemoveUserNumberForRaffle(RaffleNumberSelection selection, string raffleGuid);
         Task<IEnumerable<string>> GetNumbersForUserInRaffle(string guid, string username);
         Task UpdateRaffle(RadRaffle raffle);
+        Task<IEnumerable<RaffleNumberSelection>> GetNumbersForRaffle(string guid);
     }
 }

@@ -48,6 +48,27 @@
                                 </div>
                             </div>
                             <div class="section">
+                                <div class="has-text-centered">
+                                    <p class="is-size-2">
+                                        Winner: {{raffle.WinnerName}}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="section">
+                                <div class="has-text-centered">
+                                    <p class="is-size-2">
+                                        Winning Number: {{raffle.WinningSquare}}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="section">
+                                <div class="has-text-centered">
+                                    <p class="is-size-2">
+                                        Amount Won: {{raffle.AmountWon}}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="section">
                                 <a class="button is-large is-dark is-fullwidth" @click="viewRaffle(raffle)">
                                     View
                                 </a>

@@ -1,27 +1,25 @@
 <template>
   <div id="app">
-    <nav class="navbar is-transparent is-dark">
+    <nav class="navbar is-dark">
       <div class="navbar-brand">
         <a class="navbar-item">
           <img src="@/assets/Logo_Radicitus_White.png">
         </a>
       </div>
-      <div class="navbar-start">
-          <div class="navbar-item">
-            <a class="has-text-white" href="/raffles">
-              Raffles
-            </a>
-          </div>
+      <div class="navbar-menu">
+        <div class="navbar-start">
+          <a class="navbar-item" href="/raffles">
+            Raffles
+          </a>
+        </div>
       </div>
     </nav>
     <router-view></router-view>
   </div>
 </template>
-
 <style lang="scss">
 // Import Bulma's core
 @import "~bulma/sass/utilities/_all";
-
 // Set your colors
 $twitter: #4099FF;
 $twitter-invert: findColorInvert($twitter);
@@ -36,7 +34,8 @@ $colors: (
     "success": ($success, $success-invert),
     "warning": ($warning, $warning-invert),
     "danger": ($danger, $danger-invert),
-    "twitter": ($twitter, $twitter-invert)
+    "twitter": ($twitter, $twitter-invert),
+    "primary": ($primary, $primary-invert)
 );
 
 // Links
@@ -45,6 +44,7 @@ $link-invert: $primary-invert;
 $link-focus-border: $primary;
 
 // Import Bulma and Buefy styles
-@import "~bulma";
+@import "~bulma/bulma";
 @import "~buefy/src/scss/buefy";
+@import "@/styles/styles.scss";
 </style>

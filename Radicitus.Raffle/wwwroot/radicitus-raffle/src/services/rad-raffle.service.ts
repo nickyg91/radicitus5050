@@ -35,4 +35,10 @@ export default class RadRaffleService {
             headers: this.headers
         });
     }
+
+    public async chooseWinner(guid: string): Promise<AxiosResponse<RaffleNumberSelection>> {
+        return await axios.get(`${this.apiUrl}/api/raffle/winner/${guid}`, {
+            headers: this.headers
+        });
+    }
 }

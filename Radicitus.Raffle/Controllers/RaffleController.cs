@@ -74,8 +74,11 @@ namespace Radicitus.Raffle.Controllers
                     Number = randomInteger
                 });
             }
+            var allSquares = (await _raffleRepo.GetNumbersForRaffle(raffleGuid)).ToList();
             var raffle = await _raffleRepo.GetRaffleByGuid(raffleGuid);
+            var totalWinnings = (raffle.SquareWorthAmount * allSquares.Count()) / 2;
             _raffleRepo.PushNewWinnerForRaffle(raffle.RaffleName, winner.Name);
+            raffle.AmountWon = totalWinnings;
             raffle.WinnerName = winner.Name;
             raffle.WinningSquare = winner.Number;
             await _raffleRepo.UpdateRaffle(raffle);

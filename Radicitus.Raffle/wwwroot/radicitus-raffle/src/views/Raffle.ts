@@ -25,6 +25,9 @@ export default class RaffleView extends Vue {
     public hubConnection: HubConnection;
     private raffleService = new RadRaffleService();
     public squareClicked(square: Square) {
+        if (this.raffle.WinnerName === null) {
+            return;
+        }
         const isSquareAlreadyTakenBySomeoneElse = this.takenSquares.indexOf(square.$props.squareNumber) > -1;
         const indexOfClickedNumber = this.selectedSquares.indexOf(square.$props.squareNumber);
         const doIHaveThisNumber = indexOfClickedNumber > -1;

@@ -100,7 +100,19 @@ namespace Radicitus.Redis
 
         public async Task UpdateRaffle(RadRaffle raffle)
         {
+            await _connection.GetDatabase().StringSetAsync($"Raffle:{raffle.RaffleGuid.ToString()}", JsonConvert.SerializeObject(raffle));
             await _connection.GetDatabase().StringSetAsync(raffle.RaffleGuid.ToString(), JsonConvert.SerializeObject(raffle));
+        }
+
+        public async Task<IEnumerable<RaffleNumberSelection>> GetNumbersForRaffle(string guid)
+        {
+            var items = await _connection.GetDatabase().ListRangeAsync($"{guid}:numbers", 0);
+            var numbers = new List<RaffleNumberSelection>();
+            foreach(var item in items)
+            {
+                numbers.Add(JsonConvert.DeserializeObject<RaffleNumberSelection>(item));
+            }
+            return numbers;
         }
     }
 }
