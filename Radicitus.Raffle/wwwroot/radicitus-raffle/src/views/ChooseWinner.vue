@@ -11,7 +11,7 @@
                 </div>
                 <div v-if="raffle.WinnerName == null" class="level">
                     <div class="level-item">
-                        <button @click="chooseWinner(raffle)" class="has-text-white button is-large is-rainbow-background">
+                        <button @click="chooseWinner(raffle)" class="is-fullwidth has-text-white button is-large is-rainbow-background">
                             Choose Winner
                         </button>
                     </div>
