@@ -2,14 +2,18 @@
     @import "~bulma/sass/utilities/_all";
 </style>
 <template>
-    <div class="section">
         <div class="section">
             <div class="has-text-centered">
                 <img src="@/assets/Logo_Radicitus_Black.png"/>
                 <h1 class="is-size-1">Raffles</h1>
             </div>
-            <div class="container">
-                <div v-bind:key="raffle.RaffleGuid" v-for="raffle in raffles" class="columns">
+            <div class="columns">
+                <div class="column is-offset-2 is-two-thirds">
+                    <input type="text" placeholder="Search raffles..." class="input" v-on:keyup="searchRaffles($event)" />
+                    <hr />
+                </div>
+            </div>
+                <div v-bind:key="raffle.RaffleGuid" v-for="raffle in rafflesToDisplay" class="columns">
                     <div class="column is-offset-2 is-two-thirds">
                         <div class="box">
                             <div class="level">

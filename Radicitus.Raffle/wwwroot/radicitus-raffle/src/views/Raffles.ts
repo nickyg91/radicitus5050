@@ -14,13 +14,14 @@ export default class Raffles extends Vue {
     public rafflesToDisplay: RadRaffle[] = [];
     private _raffleService: RadRaffleService;
     private _raffleNames = new Array<string>();
-    public searchRaffles(searchTerm: string) {
-        if (searchTerm.length > 4) {
+    public searchRaffles(event: any) {
+        const val = event.target.value.toLowerCase();
+        if (event.target.value.length > 4) {
             this.rafflesToDisplay = this.raffles.filter((raffle) => {
-                return raffle.RaffleName.indexOf(searchTerm) > -1;
+                return raffle.RaffleName.toLowerCase().indexOf(val) > -1;
             });
         }
-        if (searchTerm.length === 0) {
+        if (event.target.value.length === 0) {
             this.rafflesToDisplay = this.raffles;
         }
     }
@@ -28,6 +29,7 @@ export default class Raffles extends Vue {
     public async mounted() {
         this._raffleService = new RadRaffleService();
         this.raffles = (await this._raffleService.getRaffles()).data;
+        this.rafflesToDisplay = this.raffles;
     }
 
     public viewRaffle(selectedRaffle: RadRaffle) {
