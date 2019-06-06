@@ -30,5 +30,9 @@ export default new Router({
       name: 'choosewinner',
       component: ChooseWinner,
     },
+    {
+      path: '/',
+      redirect: '/raffles',
+    },
   ],
 });

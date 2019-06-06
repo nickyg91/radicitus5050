@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
@@ -46,14 +47,34 @@ namespace Radicitus.Raffle
             {
                 app.UseDeveloperExceptionPage();
             }
-            app.UseCors(pol =>
+            if (env.IsDevelopment())
             {
-                pol.AllowAnyOrigin()
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials()
-                    .WithOrigins("http://localhost:8080");
+                app.UseCors(pol =>
+                {
+                    pol.AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials()
+                        .WithOrigins("http://localhost:8080");
+                });
+            }
+            else
+            {
+                app.UseCors(pol =>
+                {
+                    pol.AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials()
+                        .WithOrigins("https://radicitusguild.us");
+                });
+            }
+
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
+
             app.UseMvc();
             app.UseSignalR(cfg =>
             {
