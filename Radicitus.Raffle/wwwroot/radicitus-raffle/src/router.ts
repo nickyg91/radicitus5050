@@ -4,6 +4,7 @@ import RaffleView from '@/views/Raffle.vue';
 import CreateRaffle from '@/views/CreateRaffle.vue';
 import Raffles from '@/views/Raffles.vue';
 import ChooseWinner from '@/views/ChooseWinner';
+import NotFound from '@/views/NotFound';
 Vue.use(Router);
 
 export default new Router({
@@ -33,6 +34,14 @@ export default new Router({
     {
       path: '/',
       redirect: '/raffles',
+    },
+    {
+      path: '/where',
+      component: NotFound
+    },
+    {
+      path: '*',
+      redirect: '/where'
     },
   ],
 });
