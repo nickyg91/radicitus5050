@@ -2,7 +2,38 @@
     @import "~bulma/sass/utilities/_all";
     .selected {
        background-color: $grey-dark;
-       color: white; 
+       color: white;
+    }
+    .whos-here {
+        width: 200px;
+        height: 470px;
+        overflow-y: scroll;
+    }
+    .whos-here-container {
+        -webkit-transition-duration: 0.3s;
+        -moz-transition-duration: 0.3s;
+        -o-transition-duration: 0.3s;
+        transition-duration: 0.3s;
+        position: fixed;
+        top: 100px;
+        left: 0;
+        margin-left:-225px;
+    }
+    .whos-here-shown {
+        -webkit-transition-duration: 0.3s;
+        -moz-transition-duration: 0.3s;
+        -o-transition-duration: 0.3s;
+        transition-duration: 0.3s;
+        position: fixed;
+        top: 100px;
+        margin-left: 0 !important;
+    }
+    .toggle-slideout {
+        left: 0;
+        top: 55px;
+        position: fixed;
+        margin-bottom: 5px;
+        margin-left:-5px;
     }
 </style>
 <template>
@@ -45,6 +76,18 @@
                 </div>
             </div>
         </b-modal>
+        <div class=toggle-slideout>
+            <button @click="showSlideout" class="button is-info">
+                <font-awesome-icon icon="users"></font-awesome-icon>
+            </button>
+        </div>
+        <div v-bind:class="{'whos-here-shown': isSlideoutShown}" class="whos-here-container">
+            <div class="box whos-here">
+                <div v-for="user in joinedUsers" v-bind:key="user">
+                    {{user}}
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 <script lang="ts" src="@/views/Raffle.ts">

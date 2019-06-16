@@ -26,6 +26,9 @@ namespace Radicitus.Raffle.Hubs
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
+            var httpContext = Context.GetHttpContext();
+            var raffleGuid = httpContext.Request.Query["raffleGuid"];
+            //await Clients.GroupExcept(raffleGuid, Context.ConnectionId).SendAsync("UserDisconnected", user);
             await base.OnDisconnectedAsync(exception);
         }
 
@@ -35,6 +38,13 @@ namespace Radicitus.Raffle.Hubs
             var raffleGuid = httpContext.Request.Query["raffleGuid"];
             _repo.PushUserNumberForRaffle(selection, raffleGuid);
             await Clients.GroupExcept(raffleGuid, Context.ConnectionId).SendAsync("SendNumbers", selection);
+        }
+
+        public async Task UserConnectedToRaffle(string user) 
+        {
+            var httpContext = Context.GetHttpContext();
+            var raffleGuid = httpContext.Request.Query["raffleGuid"];
+            await Clients.GroupExcept(raffleGuid, Context.ConnectionId).SendAsync("UserConnected", user);
         }
     }
 }

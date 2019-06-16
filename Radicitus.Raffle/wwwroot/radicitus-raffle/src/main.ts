@@ -12,12 +12,13 @@ import {
   faCalendar,
   faCalendarDay,
   faAngleLeft,
-  faAngleRight } from '@fortawesome/free-solid-svg-icons';
+  faAngleRight,
+  faUsers } from '@fortawesome/free-solid-svg-icons';
 import 'bulma/css/bulma.css';
 import VeeValidate from 'vee-validate';
 import VueCookies from 'vue-cookies';
 
-library.add(faExclamationCircle, faCheck, faTimes, faCalendar, faCalendarDay, faAngleLeft, faAngleRight);
+library.add(faExclamationCircle, faCheck, faTimes, faCalendar, faCalendarDay, faAngleLeft, faAngleRight, faUsers);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.use(Buefy, {
   defaultIconComponent: FontAwesomeIcon,

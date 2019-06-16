@@ -12,6 +12,7 @@ import { HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
   },
 })
 export default class RaffleView extends Vue {
+    public isSlideoutShown = false;
     public raffle: Raffle = this.$store.getters.selectedRaffle;
     public squares = Array.from(Array(100).keys()).map((x) => x + 1);
     public totalSquares = 100;
@@ -23,7 +24,13 @@ export default class RaffleView extends Vue {
     public selectedSquares = new Array<number>();
     public takenSquares = new Array<number>();
     public hubConnection: HubConnection;
+    public joinedUsers: string[] = [];
     private raffleService = new RadRaffleService();
+
+    public showSlideout() {
+        this.isSlideoutShown = !this.isSlideoutShown;
+    }
+
     public squareClicked(square: Square) {
         if (this.raffle.WinnerName !== null) {
             return;
@@ -62,6 +69,7 @@ export default class RaffleView extends Vue {
         const twoWeeksFromNow = new Date();
         twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14);
         this.$cookies.set(`raffle_${this.$route.params.guid}`, JSON.stringify(raffleCookie), twoWeeksFromNow);
+        this.hubConnection.invoke('UserConnectedToRaffle', this.squareName);
     }
 
     public async mounted() {
@@ -82,6 +90,13 @@ export default class RaffleView extends Vue {
                 vueContext.takenSquares.push(result.number);
                 childSquare.$el.classList.add('selected');
             }
+        });
+        this.hubConnection.on('UserConnected', (result) => {
+            this.joinedUsers.push(result);
+        });
+        this.hubConnection.on('UserLeft', (result) => {
+            const index = this.joinedUsers.indexOf(result);
+            this.joinedUsers.splice(index, 1);
         });
         this.hubConnection.start();
         const takenRaffleNumbers = await this.raffleService.getNumbersForRaffle(this.$route.params.guid);
