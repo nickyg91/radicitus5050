@@ -92,7 +92,7 @@ namespace Radicitus.Redis
         {
             var items = await _connection.GetDatabase().ListRangeAsync($"{username}:{guid}", 0);
             var list = new List<string>();
-            foreach(var item in items)
+            foreach (var item in items)
             {
                 list.Add(item);
             }
@@ -109,7 +109,7 @@ namespace Radicitus.Redis
         {
             var items = await _connection.GetDatabase().ListRangeAsync($"{guid}:numbers", 0);
             var numbers = new List<RaffleNumberSelection>();
-            foreach(var item in items)
+            foreach (var item in items)
             {
                 numbers.Add(JsonConvert.DeserializeObject<RaffleNumberSelection>(item));
             }
@@ -132,7 +132,7 @@ namespace Radicitus.Redis
         {
             var connectionIds = await _connection.GetDatabase().SetMembersAsync($"Connections:{raffleGuid}");
             var users = new List<ConnectedUser>();
-            foreach(var id in connectionIds)
+            foreach (var id in connectionIds)
             {
                 var name = await _connection.GetDatabase().StringGetAsync($"{id}:{raffleGuid}");
                 users.Add(new ConnectedUser
@@ -142,6 +142,12 @@ namespace Radicitus.Redis
                 });
             }
             return users;
+        }
+
+        public async Task<string> GetConnectedUserName(string connectionId, string raffleGuid)
+        {
+            var ret = await _connection.GetDatabase().StringGetAsync($"{connectionId}:{raffleGuid}");
+            return ret;
         }
     }
 }

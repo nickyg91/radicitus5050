@@ -22,5 +22,6 @@ namespace Radicitus.Redis
         Task AddConnectedUserToSet(string connectionId, string raffleGuid, string user);
         Task RemoveConnectedUserFromSet(string connectionId, string raffleGuid);
         Task<IEnumerable<ConnectedUser>> GetConnectedUsersForRaffle(string raffleGuid);
+        Task<string> GetConnectedUserName(string connectionId, string raffleGuid);
     }
 }

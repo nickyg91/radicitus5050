@@ -31,7 +31,8 @@ namespace Radicitus.Raffle.Hubs
         {
             var httpContext = Context.GetHttpContext();
             var raffleGuid = httpContext.Request.Query["raffleGuid"];
-            await Clients.GroupExcept(raffleGuid, Context.ConnectionId).SendAsync("UserLeft", new ConnectedUser { ConnectionId = Context.ConnectionId, Name = "" });
+            var userLeaving = await _repo.GetConnectedUserName(Context.ConnectionId, raffleGuid);
+            await Clients.GroupExcept(raffleGuid, Context.ConnectionId).SendAsync("UserLeft", new ConnectedUser { ConnectionId = Context.ConnectionId, Name = userLeaving });
             await _repo.RemoveConnectedUserFromSet(Context.ConnectionId, raffleGuid);
             await base.OnDisconnectedAsync(exception);
         }
