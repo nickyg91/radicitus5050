@@ -5,6 +5,7 @@ import RaffleCookie from '@/models/raffle.cookie.model';
 import Raffle from '@/models/raffle.model';
 import RadRaffleService from '@/services/rad-raffle.service';
 import { HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
+import UserConnection from '@/models/raffle-hub-user.model';
 @Component({
   components: {
     RaffleView,
@@ -24,7 +25,7 @@ export default class RaffleView extends Vue {
     public selectedSquares = new Array<number>();
     public takenSquares = new Array<number>();
     public hubConnection: HubConnection;
-    public joinedUsers: string[] = [];
+    public joinedUsers = new Array<UserConnection>();
     private raffleService = new RadRaffleService();
 
     public showSlideout() {
@@ -91,11 +92,14 @@ export default class RaffleView extends Vue {
                 childSquare.$el.classList.add('selected');
             }
         });
-        this.hubConnection.on('UserConnected', (result) => {
+        this.hubConnection.on('PopulateConnectedUsers', (result: UserConnection[]) => {
+            this.joinedUsers = result;
+        });
+        this.hubConnection.on('UserConnected', (result: UserConnection) => {
             this.joinedUsers.push(result);
         });
-        this.hubConnection.on('UserLeft', (result) => {
-            const index = this.joinedUsers.indexOf(result);
+        this.hubConnection.on('UserLeft', (result: UserConnection) => {
+            const index = this.joinedUsers.map(x => x.ConnectionId).indexOf(result.ConnectionId);
             this.joinedUsers.splice(index, 1);
         });
         this.hubConnection.start();
@@ -113,6 +117,7 @@ export default class RaffleView extends Vue {
             // get numbers for this user and set their name automatically.
             this.squareName = cookie.Name;
             this.$store.commit('setUser', this.squareName);
+            this.hubConnection.invoke('UserConnectedToRaffle', cookie.Name);
             const userNumbers = await this.raffleService.getRaffleNumbersForUser(this.$route.params.guid, cookie.Name);
             if (userNumbers) {
                 vueContext.selectedSquares = userNumbers.data;

@@ -83,8 +83,8 @@
         </div>
         <div v-bind:class="{'whos-here-shown': isSlideoutShown}" class="whos-here-container">
             <div class="box whos-here">
-                <div v-for="user in joinedUsers" v-bind:key="user">
-                    {{user}}
+                <div v-for="user in joinedUsers" v-bind:key="user.connectionId">
+                    {{user.name}}
                 </div>
             </div>
         </div>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
+using Radicitus.Models;
 using Radicitus.Redis;
 using Raffle.Models;
 
@@ -21,6 +22,8 @@ namespace Radicitus.Raffle.Hubs
             var httpContext = Context.GetHttpContext();
             var raffleGuid = httpContext.Request.Query["raffleGuid"];
             await Groups.AddToGroupAsync(Context.ConnectionId, raffleGuid);
+            var connectedUsers = await _repo.GetConnectedUsersForRaffle(raffleGuid);
+            await Clients.Caller.SendAsync("PopulateConnectedUsers", connectedUsers);
             await base.OnConnectedAsync();
         }
 
@@ -28,7 +31,8 @@ namespace Radicitus.Raffle.Hubs
         {
             var httpContext = Context.GetHttpContext();
             var raffleGuid = httpContext.Request.Query["raffleGuid"];
-            //await Clients.GroupExcept(raffleGuid, Context.ConnectionId).SendAsync("UserDisconnected", user);
+            await Clients.GroupExcept(raffleGuid, Context.ConnectionId).SendAsync("UserLeft", new ConnectedUser { ConnectionId = Context.ConnectionId, Name = "" });
+            await _repo.RemoveConnectedUserFromSet(Context.ConnectionId, raffleGuid);
             await base.OnDisconnectedAsync(exception);
         }
 
@@ -44,7 +48,8 @@ namespace Radicitus.Raffle.Hubs
         {
             var httpContext = Context.GetHttpContext();
             var raffleGuid = httpContext.Request.Query["raffleGuid"];
-            await Clients.GroupExcept(raffleGuid, Context.ConnectionId).SendAsync("UserConnected", user);
+            await _repo.AddConnectedUserToSet(Context.ConnectionId, raffleGuid, user);
+            await Clients.GroupExcept(raffleGuid, Context.ConnectionId).SendAsync("UserConnected", new ConnectedUser { ConnectionId = Context.ConnectionId, Name = user });
         }
     }
 }

@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Radicitus.Models;
 using Raffle.Models;
 namespace Radicitus.Redis
 {
@@ -20,5 +19,8 @@ namespace Radicitus.Redis
         Task<IEnumerable<string>> GetNumbersForUserInRaffle(string guid, string username);
         Task UpdateRaffle(RadRaffle raffle);
         Task<IEnumerable<RaffleNumberSelection>> GetNumbersForRaffle(string guid);
+        Task AddConnectedUserToSet(string connectionId, string raffleGuid, string user);
+        Task RemoveConnectedUserFromSet(string connectionId, string raffleGuid);
+        Task<IEnumerable<ConnectedUser>> GetConnectedUsersForRaffle(string raffleGuid);
     }
 }

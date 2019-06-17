@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Radicitus.Models;
 using Raffle.Models;
 using StackExchange.Redis;
 
@@ -113,6 +114,34 @@ namespace Radicitus.Redis
                 numbers.Add(JsonConvert.DeserializeObject<RaffleNumberSelection>(item));
             }
             return numbers;
+        }
+
+        public async Task AddConnectedUserToSet(string connectionId, string raffleGuid, string user)
+        {
+            await _connection.GetDatabase().StringSetAsync($"{connectionId}:{raffleGuid}", user);
+            await _connection.GetDatabase().SetAddAsync($"Connections:{raffleGuid}", connectionId);
+        }
+
+        public async Task RemoveConnectedUserFromSet(string connectionId, string raffleGuid)
+        {
+            await _connection.GetDatabase().KeyDeleteAsync($"{connectionId}:{raffleGuid}");
+            await _connection.GetDatabase().SetRemoveAsync($"Connections:{raffleGuid}", connectionId);
+        }
+
+        public async Task<IEnumerable<ConnectedUser>> GetConnectedUsersForRaffle(string raffleGuid)
+        {
+            var connectionIds = await _connection.GetDatabase().SetMembersAsync($"Connections:{raffleGuid}");
+            var users = new List<ConnectedUser>();
+            foreach(var id in connectionIds)
+            {
+                var name = await _connection.GetDatabase().StringGetAsync($"{id}:{raffleGuid}");
+                users.Add(new ConnectedUser
+                {
+                    ConnectionId = id,
+                    Name = name
+                });
+            }
+            return users;
         }
     }
 }
