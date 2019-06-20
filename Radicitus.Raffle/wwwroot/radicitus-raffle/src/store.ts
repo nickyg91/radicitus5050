@@ -1,19 +1,19 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
-import RadRaffle from './models/raffle.model';
+import Vue from "vue";
+import Vuex from "vuex";
+import RadRaffle from "./models/raffle.model";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    currentUser: '',
-    selectedRaffle: { }
+    currentUser: "",
+    selectedRaffle: {}
   },
   getters: {
-    currentUser: (state) => {
+    currentUser: state => {
       return state.currentUser;
     },
-    selectedRaffle: (state) => {
+    selectedRaffle: state => {
       return state.selectedRaffle;
     }
   },
@@ -25,7 +25,5 @@ export default new Vuex.Store({
       state.selectedRaffle = selectedRaffle;
     }
   },
-  actions: {
-
-  },
+  actions: {}
 });

@@ -41,11 +41,12 @@ namespace Radicitus.Raffle.Hubs
         {
             var httpContext = Context.GetHttpContext();
             var raffleGuid = httpContext.Request.Query["raffleGuid"];
-            _repo.PushUserNumberForRaffle(selection, raffleGuid);
+
+            _repo.PushUserNumberForRaffle(selection, raffleGuid, selection.IsRemoved);
             await Clients.GroupExcept(raffleGuid, Context.ConnectionId).SendAsync("SendNumbers", selection);
         }
 
-        public async Task UserConnectedToRaffle(string user) 
+        public async Task UserConnectedToRaffle(string user)
         {
             var httpContext = Context.GetHttpContext();
             var raffleGuid = httpContext.Request.Query["raffleGuid"];

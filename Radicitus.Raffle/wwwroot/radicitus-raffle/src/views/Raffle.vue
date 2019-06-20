@@ -49,11 +49,10 @@
           class="column"
         >
           <Square
-            :class="{ selected: takenSquares.indexOf(squareCol) > -1 }"
             :key="squareCol"
             v-on:square-clicked="squareClicked"
             v-bind:squareNumber="squareCol"
-          />
+          ></Square>
         </div>
       </div>
     </div>

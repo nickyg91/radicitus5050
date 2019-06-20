@@ -26,10 +26,14 @@ namespace Radicitus.Redis
 
         public IEnumerable<RaffleNumberSelection> GetRadRafflesByRaffleGuid(string guid)
         {
-            var numbers = _connection.GetDatabase().ListRange($"{guid}:numbers");
+            var numbers = _connection.GetDatabase().HashGetAll($"{guid}:numbers");
             foreach (var number in numbers)
             {
-                yield return JsonConvert.DeserializeObject<RaffleNumberSelection>(number);
+                yield return new RaffleNumberSelection
+                {
+                    Name = number.Value,
+                    Number = int.Parse(number.Name)
+                };
             }
         }
 
@@ -76,21 +80,35 @@ namespace Radicitus.Redis
             return JsonConvert.DeserializeObject<RadRaffle>(lastRaffle);
         }
 
-        public void PushUserNumberForRaffle(RaffleNumberSelection selection, string raffleGuid)
+        public void PushUserNumberForRaffle(RaffleNumberSelection selection, string raffleGuid, bool isRemoved)
         {
-            _connection.GetDatabase().ListRightPush($"{raffleGuid}:numbers", JsonConvert.SerializeObject(selection));
-            _connection.GetDatabase()
-                .ListRightPush($"{selection.Name}:{raffleGuid}", selection.Number);
+            if (!isRemoved)
+            {
+                _connection.GetDatabase().HashSet($"{raffleGuid}:numbers", new HashEntry[]
+                {
+                    new HashEntry(selection.Number, selection.Name)
+                });
+                _connection.GetDatabase()
+                    .SetAdd($"{selection.Name}:{raffleGuid}", selection.Number);
+            }
+            else
+            {
+                _connection.GetDatabase().HashDelete($"{raffleGuid}:numbers", selection.Number);
+                _connection.GetDatabase()
+                    .SetRemove($"{selection.Name}:{raffleGuid}", selection.Number);
+            }
         }
 
         public void RemoveUserNumberForRaffle(RaffleNumberSelection selection, string raffleGuid)
         {
-            _connection.GetDatabase().ListRemove($"{selection.Name}:{raffleGuid}", selection.Number);
+            _connection.GetDatabase().SetRemove($"{selection.Name}:{raffleGuid}", selection.Number);
+            _connection.GetDatabase()
+                .SetRemove($"{selection.Name}:{raffleGuid}", selection.Number);
         }
 
         public async Task<IEnumerable<string>> GetNumbersForUserInRaffle(string guid, string username)
         {
-            var items = await _connection.GetDatabase().ListRangeAsync($"{username}:{guid}", 0);
+            var items = await _connection.GetDatabase().SetMembersAsync($"{username}:{guid}");
             var list = new List<string>();
             foreach (var item in items)
             {
