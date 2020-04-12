@@ -69,7 +69,7 @@ namespace Radicitus.Redis
         {
             var serializedObject = JsonConvert.SerializeObject(raffle);
             _connection.GetDatabase().ListLeftPush("raffles", raffle.RaffleGuid.ToString());
-            _connection.GetDatabase().StringSet($"Raffle:{raffle.RaffleGuid.ToString()}", serializedObject);
+            _connection.GetDatabase().StringSet($"Raffle:{raffle.RaffleGuid}", serializedObject);
         }
 
         public async Task<RadRaffle> GetLatestRadRaffle()
@@ -117,7 +117,7 @@ namespace Radicitus.Redis
 
         public async Task UpdateRaffle(RadRaffle raffle)
         {
-            await _connection.GetDatabase().StringSetAsync($"Raffle:{raffle.RaffleGuid.ToString()}", JsonConvert.SerializeObject(raffle));
+            await _connection.GetDatabase().StringSetAsync($"Raffle:{raffle.RaffleGuid}", JsonConvert.SerializeObject(raffle));
             await _connection.GetDatabase().StringSetAsync(raffle.RaffleGuid.ToString(), JsonConvert.SerializeObject(raffle));
         }
 

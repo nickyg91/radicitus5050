@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json.Serialization;
+using Microsoft.Extensions.Hosting;
 using Radicitus.Raffle.Hubs;
 using Radicitus.Redis;
 using StackExchange.Redis;
@@ -31,21 +23,22 @@ namespace Radicitus.Raffle
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                .AddJsonOptions(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver());
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             var redisConnection = "localhost";
             var connectionMultiplexer = ConnectionMultiplexer.Connect(redisConnection);
             services.AddSingleton<IRaffleRepository>(new RadRaffleRedisRepository(connectionMultiplexer));
-            services.AddSignalR()
-            .AddJsonProtocol(cfg =>
+            services.AddSignalR().AddJsonProtocol(options =>
             {
-                cfg.PayloadSerializerSettings.ContractResolver = new DefaultContractResolver();
+                options.PayloadSerializerOptions.PropertyNamingPolicy = null;
+            });
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.PropertyNamingPolicy = null;
             });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -70,7 +63,7 @@ namespace Radicitus.Raffle
                         .AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowCredentials()
-                        .WithOrigins("https://radicitusguild.us");
+                        .WithOrigins("https://radicitusguild.us", "https://health.radicitusguild.us");
                 });
             }
 
@@ -78,11 +71,13 @@ namespace Radicitus.Raffle
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
-
-            app.UseMvc();
-            app.UseSignalR(cfg =>
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
             {
-                cfg.MapHub<RaffleHub>("/rafflehub");
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller}/{action=Index}/{id?}");
+                endpoints.MapHub<RaffleHub>("/rafflehub");
             });
         }
     }
