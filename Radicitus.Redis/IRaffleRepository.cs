@@ -1,23 +1,23 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Radicitus.Models;
-using Raffle.Models;
+using Radicitus.Models.Dtos;
+
 namespace Radicitus.Redis
 {
     public interface IRaffleRepository
     {
-        Task<RadRaffle> GetRaffleByGuid(string guid);
+        Task<Raffle> GetRaffleByGuid(string guid);
         IEnumerable<RaffleNumberSelection> GetRadRafflesByRaffleGuid(string guid);
-        IEnumerable<RadRaffle> GetRadRaffles();
+        IEnumerable<Raffle> GetRadRaffles();
         void PushNewWinnerForRaffle(string raffleName, string winnerName);
         IEnumerable<string> GetWinnersOfRaffles();
         Task<string> SetGetTest(string key, string value);
-        void CreateRadRaffle(RadRaffle raffle);
-        Task<RadRaffle> GetLatestRadRaffle();
+        void CreateRadRaffle(Raffle raffle);
+        Task<Raffle> GetLatestRadRaffle();
         void PushUserNumberForRaffle(RaffleNumberSelection selection, string raffleGuid, bool isRemoved);
         void RemoveUserNumberForRaffle(RaffleNumberSelection selection, string raffleGuid);
         Task<IEnumerable<string>> GetNumbersForUserInRaffle(string guid, string username);
-        Task UpdateRaffle(RadRaffle raffle);
+        Task UpdateRaffle(Raffle raffle);
         Task<IEnumerable<RaffleNumberSelection>> GetNumbersForRaffle(string guid);
         Task AddConnectedUserToSet(string connectionId, string raffleGuid, string user);
         Task RemoveConnectedUserFromSet(string connectionId, string raffleGuid);

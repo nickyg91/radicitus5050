@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Raffle.Models
+﻿namespace Radicitus.Models.Dtos
 {
     public class RaffleNumberSelection
     {

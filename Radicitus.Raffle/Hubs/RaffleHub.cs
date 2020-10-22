@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Radicitus.Models;
+using Radicitus.Models.Dtos;
 using Radicitus.Redis;
-using Raffle.Models;
 
 namespace Radicitus.Raffle.Hubs
 {

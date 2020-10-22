@@ -5,9 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Contexts\Raffles\Interfaces\" />
-    <Folder Include="Contexts\Raffles\Implementations\" />
-    <Folder Include="Contexts\Raffles\Entities\" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.9" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="3.1.9" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.9" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Radicitus.Raffle.Models\Radicitus.Models.csproj" />
   </ItemGroup>
 
 </Project>

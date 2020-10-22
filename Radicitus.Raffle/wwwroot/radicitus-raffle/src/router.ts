@@ -3,8 +3,8 @@ import Router from 'vue-router';
 import RaffleView from '@/views/Raffle.vue';
 import CreateRaffle from '@/views/CreateRaffle.vue';
 import Raffles from '@/views/Raffles.vue';
-import ChooseWinner from '@/views/ChooseWinner';
-import NotFound from '@/views/NotFound';
+import ChooseWinner from '@/views/ChooseWinner.vue';
+import NotFound from '@/views/NotFound.vue';
 Vue.use(Router);
 
 export default new Router({

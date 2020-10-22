@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Radicitus.Data.Contexts.Raffles;
+using Radicitus.Data.Contexts.Raffles.Implementations;
+using Radicitus.Data.Contexts.Raffles.Interfaces;
 using Radicitus.Raffle.Hubs;
-using Radicitus.Redis;
-using StackExchange.Redis;
 
 namespace Radicitus.Raffle
 {
@@ -24,9 +26,9 @@ namespace Radicitus.Raffle
         {
             services.AddCors();
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
-            var redisConnection = "localhost";
-            var connectionMultiplexer = ConnectionMultiplexer.Connect(redisConnection);
-            services.AddSingleton<IRaffleRepository>(new RadRaffleRedisRepository(connectionMultiplexer));
+            //var redisConnection = "localhost";
+            //var connectionMultiplexer = ConnectionMultiplexer.Connect(redisConnection);
+            //services.AddSingleton<IRaffleRepository>(new RadRaffleRedisRepository(connectionMultiplexer));
             services.AddSignalR().AddJsonProtocol(options =>
             {
                 options.PayloadSerializerOptions.PropertyNamingPolicy = null;
@@ -35,6 +37,17 @@ namespace Radicitus.Raffle
             {
                 options.JsonSerializerOptions.PropertyNamingPolicy = null;
             });
+            var connectionString = Configuration.GetConnectionString("radicitus-5050");
+
+            services.AddDbContext<RadicitusDbContext>(optionsAction =>
+            {
+                optionsAction.UseNpgsql(connectionString, builder =>
+                {
+                    builder.MigrationsAssembly("Radicitus.Raffle");
+                });
+            });
+
+            services.AddScoped<IRaffleRepository, RaffleRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -2,12 +2,12 @@
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Radicitus.Models;
-using Raffle.Models;
+using Radicitus.Models.Dtos;
 using StackExchange.Redis;
 
 namespace Radicitus.Redis
 {
-    public class RadRaffleRedisRepository : IRaffleRepository
+    public class RadRaffleRedisRepository //: IRaffleRepository
     {
         private readonly ConnectionMultiplexer _connection;
 
@@ -16,10 +16,10 @@ namespace Radicitus.Redis
             _connection = connection;
         }
 
-        public async Task<RadRaffle> GetRaffleByGuid(string guid)
+        public async Task<Raffle> GetRaffleByGuid(string guid)
         {
             var raffleJson = await _connection.GetDatabase().StringGetAsync($"Raffle:{guid}");
-            return JsonConvert.DeserializeObject<RadRaffle>(raffleJson);
+            return JsonConvert.DeserializeObject<Raffle>(raffleJson);
         }
 
         public IEnumerable<RaffleNumberSelection> GetRadRafflesByRaffleGuid(string guid)
@@ -35,13 +35,13 @@ namespace Radicitus.Redis
             }
         }
 
-        public IEnumerable<RadRaffle> GetRadRaffles()
+        public IEnumerable<Raffle> GetRadRaffles()
         {
             var guids = _connection.GetDatabase().ListRange("raffles");
             foreach (var guid in guids)
             {
                 var raffle = _connection.GetDatabase().StringGet($"Raffle:{guid}");
-                yield return JsonConvert.DeserializeObject<RadRaffle>(raffle);
+                yield return JsonConvert.DeserializeObject<Raffle>(raffle);
             }
         }
 
@@ -65,17 +65,17 @@ namespace Radicitus.Redis
             return await _connection.GetDatabase().StringGetAsync(key);
         }
 
-        public void CreateRadRaffle(RadRaffle raffle)
-        {
-            var serializedObject = JsonConvert.SerializeObject(raffle);
-            _connection.GetDatabase().ListLeftPush("raffles", raffle.RaffleGuid.ToString());
-            _connection.GetDatabase().StringSet($"Raffle:{raffle.RaffleGuid}", serializedObject);
-        }
+        //public void CreateRadRaffle(RadRaffle raffle)
+        //{
+        //    var serializedObject = JsonConvert.SerializeObject(raffle);
+        //    _connection.GetDatabase().ListLeftPush("raffles", raffle.RaffleGuid.ToString());
+        //    _connection.GetDatabase().StringSet($"Raffle:{raffle.RaffleGuid}", serializedObject);
+        //}
 
-        public async Task<RadRaffle> GetLatestRadRaffle()
+        public async Task<Raffle> GetLatestRadRaffle()
         {
             var lastRaffle = await _connection.GetDatabase().ListGetByIndexAsync("raffles", 0);
-            return JsonConvert.DeserializeObject<RadRaffle>(lastRaffle);
+            return JsonConvert.DeserializeObject<Raffle>(lastRaffle);
         }
 
         public void PushUserNumberForRaffle(RaffleNumberSelection selection, string raffleGuid, bool isRemoved)
@@ -115,11 +115,11 @@ namespace Radicitus.Redis
             return list;
         }
 
-        public async Task UpdateRaffle(RadRaffle raffle)
-        {
-            await _connection.GetDatabase().StringSetAsync($"Raffle:{raffle.RaffleGuid}", JsonConvert.SerializeObject(raffle));
-            await _connection.GetDatabase().StringSetAsync(raffle.RaffleGuid.ToString(), JsonConvert.SerializeObject(raffle));
-        }
+        //public async Task UpdateRaffle(RadRaffle raffle)
+        //{
+        //    await _connection.GetDatabase().StringSetAsync($"Raffle:{raffle.RaffleGuid}", JsonConvert.SerializeObject(raffle));
+        //    await _connection.GetDatabase().StringSetAsync(raffle.RaffleGuid.ToString(), JsonConvert.SerializeObject(raffle));
+        //}
 
         public async Task<IEnumerable<RaffleNumberSelection>> GetNumbersForRaffle(string guid)
         {

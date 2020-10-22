@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Raffle.Models
+namespace Radicitus.Models.Dtos
 {
     public class RaffleNumber
     {
