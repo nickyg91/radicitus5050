@@ -9,6 +9,8 @@ using Radicitus.Data.Contexts.Raffles;
 using Radicitus.Data.Contexts.Raffles.Implementations;
 using Radicitus.Data.Contexts.Raffles.Interfaces;
 using Radicitus.Raffle.Hubs;
+using Radicitus.Redis;
+using StackExchange.Redis;
 
 namespace Radicitus.Raffle
 {
@@ -26,9 +28,9 @@ namespace Radicitus.Raffle
         {
             services.AddCors();
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
-            //var redisConnection = "localhost";
-            //var connectionMultiplexer = ConnectionMultiplexer.Connect(redisConnection);
-            //services.AddSingleton<IRaffleRepository>(new RadRaffleRedisRepository(connectionMultiplexer));
+            var redisConnection = "localhost";
+            var connectionMultiplexer = ConnectionMultiplexer.Connect(redisConnection);
+            services.AddSingleton<IRedisRaffleRepository>(new RadRaffleRedisRepository(connectionMultiplexer));
             services.AddSignalR().AddJsonProtocol(options =>
             {
                 options.PayloadSerializerOptions.PropertyNamingPolicy = null;
@@ -47,7 +49,7 @@ namespace Radicitus.Raffle
                 });
             });
 
-            services.AddScoped<IRaffleRepository, RaffleRepository>();
+            services.AddScoped<RaffleRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

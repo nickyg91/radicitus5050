@@ -125,6 +125,7 @@ import RadRaffleService from "@/services/rad-raffle.service";
 import { HubConnection, HubConnectionBuilder } from "@aspnet/signalr";
 import UserConnection from "@/models/raffle-hub-user.model";
 import ToastConfig from "buefy";
+import RaffleNumberSelection from "../models/raffle-number-selection.model";
 @Component({
   components: {
     RaffleView,
@@ -212,12 +213,12 @@ export default class RaffleView extends Vue {
   public async mounted() {
     const vueContext = this;
     const takenRaffleNumbers = await this.raffleService.getNumbersForRaffle(
-      this.$route.params.guid
+      (this.$route.params.raffleId as unknown) as number
     );
     const cookie: RaffleCookie = this.$cookies.get(
-      `raffle_${this.$route.params.guid}`
+      `raffle_${this.$route.params.raffleId}`
     );
-    takenRaffleNumbers.data.forEach((raffle) => {
+    takenRaffleNumbers.data.forEach((raffle: RaffleNumberSelection) => {
       const childSquare = vueContext.$children.filter(
         (x) => x.$props.squareNumber === raffle.Number
       )[0];
@@ -233,7 +234,7 @@ export default class RaffleView extends Vue {
       this.$store.commit("setUser", this.squareName);
       this.hubConnection.invoke("UserConnectedToRaffle", cookie.Name);
       const userNumbers = await this.raffleService.getRaffleNumbersForUser(
-        this.$route.params.guid,
+        (this.$route.params.raffleId as unknown) as number,
         cookie.Name
       );
       if (userNumbers) {
@@ -305,7 +306,7 @@ export default class RaffleView extends Vue {
     const raffleCookie = new RaffleCookie();
     raffleCookie.Name = this.squareName;
     raffleCookie.Raffle = new Raffle();
-    raffleCookie.Raffle.RaffleGuid = this.$route.params.guid;
+    raffleCookie.Raffle.Id = (this.$route.params.id as unknown) as number;
     const twoWeeksFromNow = new Date();
     twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14);
     this.$cookies.set(

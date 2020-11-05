@@ -1,11 +1,13 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Radicitus.Data.Contexts.Raffles.Entities;
-using Radicitus.Data.Contexts.Raffles.Interfaces;
+using Radicitus.Data.Contexts.Raffles.Implementations;
 using Radicitus.Models.Dtos;
 using Radicitus.Models.Interfaces;
 using Radicitus.Models.ReferenceMapper;
+using RaffleNumber = Radicitus.Data.Contexts.Raffles.Entities.RaffleNumber;
 
 namespace Radicitus.Raffle.Controllers
 {
@@ -13,77 +15,82 @@ namespace Radicitus.Raffle.Controllers
     [ApiController]
     public class RaffleController : ControllerBase
     {
-        private readonly IRaffleRepository _raffleRepo;
+        private readonly RaffleRepository _raffleRepo;
 
-        public RaffleController(IRaffleRepository raffleRepo)
+        public RaffleController(RaffleRepository raffleRepo)
         {
             _raffleRepo = raffleRepo;
         }
         [HttpPost("create")]
-        public IActionResult CreateRaffle(RadRaffle raffle)
+        public async Task<IActionResult> CreateRaffle(RadicitusRaffle raffle)
         {
-            //var guid = Guid.NewGuid();
-            //raffle.RaffleGuid = guid;
-            //raffle.DateCreated = DateTime.Now;
+            raffle.DateCreatedUtc = DateTime.UtcNow;
 
-            //_raffleRepo.CreateRadRaffle(raffle);
+            var raffleToCreate = ReferenceMapper.MapToNewInstance<RadicitusRaffle, RadRaffle, IRadRaffle>(raffle);
+            _raffleRepo.Add(raffleToCreate);
+            await _raffleRepo.SaveChangesAsync();
+
+            raffle = ReferenceMapper.MapToNewInstance<RadRaffle, RadicitusRaffle, IRadRaffle>(raffleToCreate);
             return Ok(raffle);
         }
 
-        [HttpGet("numbers/{raffleGuid}")]
-        public IActionResult GetNumbersForRaffleGrid(string raffleGuid)
+        [HttpGet("numbers/{raffleId}")]
+        public IActionResult GetNumbersForRaffleGrid(int raffleId)
         {
-            //var raffleNumbers = _raffleRepo.GetRadRafflesByRaffleGuid(raffleGuid);
-            return Ok();
+            var raffleNumbers = _raffleRepo.GetRaffleNumbersByRaffleId(raffleId).ToList();
+            var raffleDtos = raffleNumbers.Select(ReferenceMapper
+                .MapToNewInstance<RaffleNumber, Models.Dtos.RaffleNumber, IRaffleNumber>).ToList();
+            return Ok(raffleDtos);
         }
 
-        [HttpGet("{raffleGuid}/{username}/numbers")]
-        public async Task<IActionResult> GetNumbersForRaffleUser(string raffleGuid, string username)
+        [HttpGet("{id}/{username}/numbers")]
+        public IActionResult GetNumbersForRaffleUser(int id, string username)
         {
-            //var raffleNumbers = await _raffleRepo.GetNumbersForUserInRaffle(raffleGuid, username);
-            return Ok();
+            var raffleNumbers = _raffleRepo.GetRaffleNumbersByIdAndName(id, username).ToList();
+            var raffleDtos = raffleNumbers
+                .Select(ReferenceMapper.MapToNewInstance<RaffleNumber, Models.Dtos.RaffleNumber, IRaffleNumber>)
+                .ToList();
+            return Ok(raffleDtos);
         }
 
-        //[HttpGet("winner/{raffleGuid}")]
-        //public async Task<IActionResult> GetWinner(string raffleGuid)
-        //{
-        //    var rand = new Random();
-        //    var randomInteger = rand.Next(1, 100);
-        //    var doWeHaveAWinner = _raffleRepo.GetRadRafflesByRaffleGuid(raffleGuid);
-        //    if (doWeHaveAWinner.Count() < 0)
-        //    {
-        //        return Ok(new RaffleNumberSelection 
-        //        {
-        //            Name = null,
-        //            Number = randomInteger
-        //        });
-        //    }
-        //    var winner = doWeHaveAWinner.FirstOrDefault(x => x.Number == randomInteger);
-        //    if (winner == null)
-        //    {
-        //        return Ok(new RaffleNumberSelection 
-        //        {
-        //            Name = null,
-        //            Number = randomInteger
-        //        });
-        //    }
-        //    var allSquares = (await _raffleRepo.GetNumbersForRaffle(raffleGuid)).ToList();
-        //    var raffle = await _raffleRepo.GetRaffleByGuid(raffleGuid);
-        //    var totalWinnings = (raffle.SquareWorthAmount * allSquares.Count()) / 2;
-        //    _raffleRepo.PushNewWinnerForRaffle(raffle.RaffleName, winner.Name);
-        //    raffle.AmountWon = totalWinnings;
-        //    raffle.WinnerName = winner.Name;
-        //    raffle.WinningSquare = winner.Number;
-        //    await _raffleRepo.UpdateRaffle(raffle);
-        //    return Ok(winner);
-        //}
+        [HttpGet("winner/{id}")]
+        public async Task<IActionResult> GetWinner(int id)
+        {
+            var rand = new Random();
+            var randomInteger = rand.Next(1, 100);
+            var raffleNumbers = _raffleRepo.GetRaffleNumbersByRaffleId(id).ToList();
+            var raffle = await _raffleRepo.GetRaffleById(id);
+            if (!raffleNumbers.Any())
+            {
+                return Ok(new RaffleNumberSelection 
+                {
+                    Name = null,
+                    Number = randomInteger
+                });
+            }
+            var winner = raffleNumbers.FirstOrDefault(x => x.Number == randomInteger);
+            if (winner == null)
+            {
+                return Ok(new RaffleNumberSelection 
+                {
+                    Name = null,
+                    Number = randomInteger
+                });
+            }
+            var totalWinnings = (raffle.SquareWorthAmount * raffleNumbers.Count) / 2;
+            raffle.AmountWon = raffle.SquareWorthAmount * raffleNumbers.Count;
+            raffle.WinnerName = winner.Name;
+            raffle.WinningSquare = winner.Number;
+            _raffleRepo.Update(raffle);
+            await _raffleRepo.SaveChangesAsync();
+            return Ok(winner);
+        }
         
         [HttpGet("raffles")]
-        public async Task<IActionResult> GetAllRaffles()
+        public IActionResult GetAllRaffles()
         {
             var raffles = _raffleRepo.GetRaffles().ToList();
-            var mappedRaffles = raffles.Select(ReferenceMapper.MapToNewInstance<RadRaffle, Models.Dtos.Raffle, IRadRaffle>);
-            
+            var mappedRaffles = raffles.Select(ReferenceMapper.MapToNewInstance<RadRaffle, RadicitusRaffle, IRadRaffle>);
             return Ok(mappedRaffles);
         }
     }

@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Radicitus.Raffle.Models\Radicitus.Models.csproj" />
+    <ProjectReference Include="..\Radicitus.Models\Radicitus.Models.csproj" />
   </ItemGroup>
 
 </Project>

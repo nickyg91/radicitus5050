@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Radicitus.Data.Contexts.Raffles.Implementations
 {
-    public class RaffleRepository : BaseRepository<RadicitusDbContext, RadRaffle>, IRaffleRepository
+    public class RaffleRepository : BaseRepository<RadicitusDbContext>, IRaffleRepository
     {
         public RaffleRepository(RadicitusDbContext context) : base(context)
         { }
@@ -22,6 +22,16 @@ namespace Radicitus.Data.Contexts.Raffles.Implementations
             return await Context.Raffles
                 .Include(x => x.RaffleNumbers)
                 .SingleOrDefaultAsync(x => x.Id == id);
+        }
+
+        public IEnumerable<RaffleNumber> GetRaffleNumbersByRaffleId(int id)
+        {
+            return Context.RaffleNumbers.Where(x => x.RaffleId == id);
+        }
+
+        public IEnumerable<RaffleNumber> GetRaffleNumbersByIdAndName(int id, string name)
+        {
+            return Context.RaffleNumbers.Where(x => x.Id == id && x.Name == name);
         }
     }
 }

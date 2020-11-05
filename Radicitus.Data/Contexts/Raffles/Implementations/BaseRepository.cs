@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Radicitus.Data.Contexts.Raffles.Implementations
 {
-    public abstract class BaseRepository<TContext, TDbEntity> : DbContext where TContext : DbContext
+    public abstract class BaseRepository<TContext> : DbContext where TContext : DbContext
     {
         public readonly TContext Context;
         public BaseRepository(TContext context)

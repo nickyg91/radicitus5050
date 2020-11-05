@@ -8,5 +8,7 @@ namespace Radicitus.Data.Contexts.Raffles.Interfaces
     {
         IEnumerable<RadRaffle> GetRaffles();
         Task<RadRaffle> GetRaffleById(int id);
+        IEnumerable<RaffleNumber> GetRaffleNumbersByRaffleId(int id);
+        IEnumerable<RaffleNumber> GetRaffleNumbersByIdAndName(int id, string name);
     }
 }

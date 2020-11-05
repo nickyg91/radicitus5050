@@ -72,9 +72,7 @@ export default class ChooseWinner extends Vue {
 
   public async chooseWinner(raffle: RadRaffle) {
     this.isLoadingWinner = true;
-    this.winner = (
-      await this.raffleService.chooseWinner(raffle.RaffleGuid)
-    ).data;
+    this.winner = (await this.raffleService.chooseWinner(raffle.Id)).data;
     this.isLoadingWinner = false;
     if (this.winner.Name !== null) {
       raffle.WinnerName = this.winner.Name;

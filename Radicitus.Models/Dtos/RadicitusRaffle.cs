@@ -4,7 +4,7 @@ using Radicitus.Models.Interfaces;
 
 namespace Radicitus.Models.Dtos
 {
-    public class Raffle : IRadRaffle
+    public class RadicitusRaffle : IRadRaffle
     {
         public int Id { get; set; }
         public string RaffleName { get; set; }
