@@ -29,7 +29,7 @@
                   type="number"
                   name="squareWorth"
                   class="input"
-                  v-model="raffle.SquareWorthAmount"
+                  v-model.number="raffle.SquareWorthAmount"
                 />
               </div>
               <div class="field">
@@ -37,7 +37,7 @@
                   <b-datepicker
                     name="startDate"
                     v-validate="'required'"
-                    v-model="raffle.StartDate"
+                    v-model="raffle.StartDateUtc"
                     placeholder="Click to select..."
                     icon="calendar"
                   >
@@ -49,7 +49,7 @@
                   <b-datepicker
                     name="endDate"
                     v-validate="'required'"
-                    v-model="raffle.EndDate"
+                    v-model="raffle.EndDateUtc"
                     placeholder="Click to select..."
                     icon="calendar"
                   >
@@ -70,12 +70,9 @@
         <div class="column"></div>
       </div>
     </section>
-    <section
-      class="has-text-centered"
-      v-if="raffle.RaffleGuid && raffle.RaffleGuid.length > 0"
-    >
+    <section class="has-text-centered" v-if="raffle.Id && raffle.Id > 0">
       <div>Distribute this url for the 50/50 raffle to everyone.</div>
-      <div>https://radicitusguild.us/raffle/{{ raffle.RaffleGuid }}</div>
+      <div>https://radicitusguild.us/raffle/{{ raffle.Id }}</div>
     </section>
     <b-loading
       :is-full-page="true"

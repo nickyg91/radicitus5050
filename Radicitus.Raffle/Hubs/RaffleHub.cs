@@ -24,9 +24,9 @@ namespace Radicitus.Raffle.Hubs
         public override async Task OnConnectedAsync()
         {
             var httpContext = Context.GetHttpContext();
-            var raffleGuid = httpContext.Request.Query["raffleGuid"];
-            await Groups.AddToGroupAsync(Context.ConnectionId, raffleGuid);
-            var connectedUsers = await _repo.GetConnectedUsersForRaffle(raffleGuid);
+            var raffleId = httpContext.Request.Query["raffleId"];
+            await Groups.AddToGroupAsync(Context.ConnectionId, raffleId);
+            var connectedUsers = await _repo.GetConnectedUsersForRaffle(raffleId);
             await Clients.Caller.SendAsync("PopulateConnectedUsers", connectedUsers);
             await base.OnConnectedAsync();
         }
@@ -34,10 +34,10 @@ namespace Radicitus.Raffle.Hubs
         public override async Task OnDisconnectedAsync(Exception exception)
         {
             var httpContext = Context.GetHttpContext();
-            var raffleGuid = httpContext.Request.Query["raffleGuid"];
-            var userLeaving = await _repo.GetConnectedUserName(Context.ConnectionId, raffleGuid);
-            await Clients.GroupExcept(raffleGuid, Context.ConnectionId).SendAsync("UserLeft", new ConnectedUser { ConnectionId = Context.ConnectionId, Name = userLeaving });
-            await _repo.RemoveConnectedUserFromSet(Context.ConnectionId, raffleGuid);
+            var raffleId = httpContext.Request.Query["raffleId"];
+            var userLeaving = await _repo.GetConnectedUserName(Context.ConnectionId, raffleId);
+            await Clients.GroupExcept(raffleId, Context.ConnectionId).SendAsync("UserLeft", new ConnectedUser { ConnectionId = Context.ConnectionId, Name = userLeaving });
+            await _repo.RemoveConnectedUserFromSet(Context.ConnectionId, raffleId);
             await base.OnDisconnectedAsync(exception);
         }
 
@@ -73,9 +73,9 @@ namespace Radicitus.Raffle.Hubs
         public async Task UserConnectedToRaffle(string user)
         {
             var httpContext = Context.GetHttpContext();
-            var raffleGuid = httpContext.Request.Query["raffleGuid"];
-            await _repo.AddConnectedUserToSet(Context.ConnectionId, raffleGuid, user);
-            await Clients.GroupExcept(raffleGuid, Context.ConnectionId).SendAsync("UserConnected", new ConnectedUser { ConnectionId = Context.ConnectionId, Name = user });
+            var raffleId = httpContext.Request.Query["raffleId"];
+            await _repo.AddConnectedUserToSet(Context.ConnectionId, raffleId, user);
+            await Clients.GroupExcept(raffleId, Context.ConnectionId).SendAsync("UserConnected", new ConnectedUser { ConnectionId = Context.ConnectionId, Name = user });
         }
     }
 }

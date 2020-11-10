@@ -12,7 +12,7 @@ export default new Router({
   base: process.env.BASE_URL,
   routes: [
     {
-      path: '/raffle/:id',
+      path: '/raffle/:raffleId',
       name: 'raffle',
       component: RaffleView,
     },

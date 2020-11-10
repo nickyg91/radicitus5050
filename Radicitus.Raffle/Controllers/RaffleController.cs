@@ -85,7 +85,15 @@ namespace Radicitus.Raffle.Controllers
             await _raffleRepo.SaveChangesAsync();
             return Ok(winner);
         }
-        
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetRaffle(int id)
+        {
+            var raffle = await _raffleRepo.GetRaffleById(id);
+            var raffleDto = ReferenceMapper.MapToNewInstance<RadRaffle, RadicitusRaffle, IRadRaffle>(raffle);
+            return Ok(raffleDto);
+        }
+
         [HttpGet("raffles")]
         public IActionResult GetAllRaffles()
         {

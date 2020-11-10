@@ -134,7 +134,7 @@ import RaffleNumberSelection from "../models/raffle-number-selection.model";
 })
 export default class RaffleView extends Vue {
   public isSlideoutShown = false;
-  public raffle: Raffle;
+  public raffle!: Raffle;
   public squares = Array.from(Array(100).keys()).map((x) => x + 1);
   public totalSquares = 100;
   public numberOfRows = 10;
@@ -151,12 +151,19 @@ export default class RaffleView extends Vue {
     this.isSlideoutShown = !this.isSlideoutShown;
   }
 
-  public created() {
+  public async created() {
     const vueContext = this;
     this.raffle = this.$store.getters.selectedRaffle;
+    if (this.raffle.Id == null) {
+      this.raffle = (
+        await this.raffleService.getRaffleById(
+          (this.$route.params.raffleId as unknown) as number
+        )
+      ).data;
+    }
     const url = process.env.VUE_APP_API_URL;
     this.hubConnection = new HubConnectionBuilder()
-      .withUrl(`${url}/rafflehub?raffleguid=${this.$route.params.guid}`)
+      .withUrl(`${url}/rafflehub?raffleId=${this.$route.params.raffleId}`)
       .build();
     this.hubConnection.on("SendNumbers", (result) => {
       const childSquare = vueContext.$children.filter(
@@ -190,7 +197,7 @@ export default class RaffleView extends Vue {
         return;
       }
       this.joinedUsers.push(result);
-      this.$toast.open({
+      this.$buefy.toast.open({
         position: "is-bottom",
         type: "is-info",
         message: `${result.Name} has joined.`,
@@ -201,7 +208,7 @@ export default class RaffleView extends Vue {
         .map((x) => x.ConnectionId)
         .indexOf(result.ConnectionId);
       this.joinedUsers.splice(index, 1);
-      this.$toast.open({
+      this.$buefy.toast.open({
         position: "is-bottom",
         type: "is-warning",
         message: `${result.Name} has left.`,
@@ -228,6 +235,7 @@ export default class RaffleView extends Vue {
         childSquare.$el.classList.add("selected");
       }
     });
+
     if (cookie) {
       // get numbers for this user and set their name automatically.
       this.squareName = cookie.Name;
@@ -294,7 +302,7 @@ export default class RaffleView extends Vue {
         .map((x) => x.Name.toLowerCase())
         .indexOf(this.squareName.toLowerCase()) > -1;
     if (nameExists) {
-      this.$toast.open({
+      this.$buefy.toast.open({
         position: "is-bottom",
         type: "is-danger",
         message: `Sorry, but ${this.squareName} has already been taken.`,
@@ -310,7 +318,7 @@ export default class RaffleView extends Vue {
     const twoWeeksFromNow = new Date();
     twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14);
     this.$cookies.set(
-      `raffle_${this.$route.params.guid}`,
+      `raffle_${this.$route.params.raffleId}`,
       JSON.stringify(raffleCookie),
       twoWeeksFromNow
     );

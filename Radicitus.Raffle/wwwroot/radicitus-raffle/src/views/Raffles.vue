@@ -125,7 +125,7 @@ export default class Raffles extends Vue {
   }
 
   public viewRaffle(selectedRaffle: RadRaffle) {
-    this.$store.commit('setSelectedRaffle', selectedRaffle);
+    this.$store.commit("setSelectedRaffle", selectedRaffle);
     router.push(`/raffle/${selectedRaffle.Id}`);
   }
 }
