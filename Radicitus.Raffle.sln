@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Radicitus.Raffle", "Radicit
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Radicitus.Redis", "Radicitus.Redis\Radicitus.Redis.csproj", "{04F4A400-E19C-4396-81F2-F444884D0988}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Raffle.Models", "Radicitus.Raffle.Models\Raffle.Models.csproj", "{B0D42F53-C8FA-4187-AFFD-82B974BBB27E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Radicitus.Models", "Radicitus.Models\Radicitus.Models.csproj", "{B0D42F53-C8FA-4187-AFFD-82B974BBB27E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Radicitus.Data", "Radicitus.Data\Radicitus.Data.csproj", "{B671714B-5598-4520-9AED-041D51E7AAFF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Radicitus.Data", "Radicitus.Data\Radicitus.Data.csproj", "{B671714B-5598-4520-9AED-041D51E7AAFF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

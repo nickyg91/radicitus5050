@@ -1,98 +1,122 @@
 <template>
   <div>
-      <section class="hero is-dark">
-        <div class="hero-body">
-          <div class="container">
-            <h1 class="title is-white">
-              Create a 50/50 Raffle
-            </h1>
+    <section class="hero is-dark">
+      <div class="hero-body">
+        <div class="container">
+          <h1 class="title is-white">Create a 50/50 Raffle</h1>
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="columns">
+        <div class="column is-offset-one-third">
+          <div class="box">
+            <form @submit.prevent="submitRaffle">
+              <div class="field">
+                <label class="label is-large"> Name </label>
+                <input
+                  v-validate="'required|min:5'"
+                  name="name"
+                  type="text"
+                  class="input"
+                  v-model="raffle.RaffleName"
+                />
+              </div>
+              <div class="field">
+                <label class="label is-large"> Square Worth </label>
+                <input
+                  v-validate="'required|integer'"
+                  type="number"
+                  name="squareWorth"
+                  class="input"
+                  v-model.number="raffle.SquareWorthAmount"
+                />
+              </div>
+              <div class="field">
+                <b-field custom-class="is-large" label="Start Date">
+                  <b-datepicker
+                    name="startDate"
+                    v-validate="'required'"
+                    v-model="raffle.StartDateUtc"
+                    placeholder="Click to select..."
+                    icon="calendar"
+                  >
+                  </b-datepicker>
+                </b-field>
+              </div>
+              <div class="field">
+                <b-field custom-class="is-large" label="End Date">
+                  <b-datepicker
+                    name="endDate"
+                    v-validate="'required'"
+                    v-model="raffle.EndDateUtc"
+                    placeholder="Click to select..."
+                    icon="calendar"
+                  >
+                  </b-datepicker>
+                </b-field>
+              </div>
+              <div class="field">
+                <button
+                  type="submit"
+                  class="is-fullwidth is-large button is-dark"
+                >
+                  Submit
+                </button>
+              </div>
+            </form>
           </div>
         </div>
-      </section>
-      <section class="section">
-        <div class="columns">
-          <div class="column is-offset-one-third">
-            <div class="box">
-              <form @submit.prevent="submitRaffle">
-                <div class="field">
-                  <label class="label is-large">
-                    Name
-                  </label>
-                  <input v-validate="'required|min:5'" name="name" type="text" class="input" v-model="raffle.RaffleName"/>
-                </div>
-                <div class="field">
-                  <label class="label is-large">
-                    Square Worth
-                  </label>
-                  <input v-validate="'required|integer'" type="text" name="squareWorth" class="input" v-model="raffle.SquareWorthAmount"/>
-                </div>
-                <div class="field">
-                  <b-field 
-                      custom-class="is-large" label="Start Date">
-                    <b-datepicker
-                      name="startDate"
-                      v-validate="'required'"
-                      v-model="raffle.StartDate" 
-                      placeholder="Click to select..."
-                      icon="calendar">
-                    </b-datepicker>
-                  </b-field>
-                </div>
-                <div class="field">
-                  <b-field 
-                      custom-class="is-large" label="End Date">
-                    <b-datepicker
-                      name="endDate"
-                      v-validate="'required'"
-                      v-model="raffle.EndDate" 
-                      placeholder="Click to select..."
-                      icon="calendar">
-                    </b-datepicker>
-                  </b-field>
-                </div>
-                <div class="field">
-                  <button type="submit" class="is-fullwidth is-large button is-dark">
-                    Submit
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-          <div class="column">
-          </div>
-        </div>
-      </section>
-      <section class="has-text-centered" v-if="raffle.RaffleGuid && raffle.RaffleGuid.length > 0">
-        <div>Distribute this url for the 50/50 raffle to everyone.</div>
-        <div>https://radicitusguild.us/raffle/{{raffle.RaffleGuid}}</div>
-      </section>
-      <b-loading :is-full-page="true" :active.sync="isLoading" :can-cancel="false"></b-loading>
+        <div class="column"></div>
+      </div>
+    </section>
+    <section class="has-text-centered" v-if="raffle.Id && raffle.Id > 0">
+      <div>Distribute this url for the 50/50 raffle to everyone.</div>
+      <div>https://radicitusguild.us/raffle/{{ raffle.Id }}</div>
+    </section>
+    <b-loading
+      :is-full-page="true"
+      :active.sync="isLoading"
+      :can-cancel="false"
+    ></b-loading>
   </div>
 </template>
 <script lang="ts">
-import {Inject, Vue, Component} from 'vue-property-decorator';
-import RadRaffle from '@/models/raffle.model';
-import RadRaffleService from '@/services/rad-raffle.service';
+import { Vue, Component } from "vue-property-decorator";
+import RadRaffle from "@/models/raffle.model";
+import RadRaffleService from "@/services/rad-raffle.service";
 @Component
 export default class CreateRaffle extends Vue {
   public raffle: RadRaffle = new RadRaffle();
   private radServices: RadRaffleService = new RadRaffleService();
   private isLoading = false;
   public mounted() {
-    this.raffle.StartDate = new Date();
-    this.raffle.EndDate = new Date();
+    this.raffle.StartDateUtc = new Date();
+    this.raffle.EndDateUtc = new Date();
   }
   public async submitRaffle() {
     const isValid = await this.$validator.validateAll();
     if (isValid) {
-        try {
-          this.isLoading = true;
-          const resp = await this.radServices.createRaffle(this.raffle);
-          this.raffle.RaffleGuid = resp.data.RaffleGuid;
-        } catch (ex) {
-        } finally {
-          this.isLoading = false;
-        }
+      try {
+        this.isLoading = true;
+        const resp = await this.radServices.createRaffle(this.raffle);
+        this.raffle.Id = resp.data.Id;
+        this.$buefy.notification.open({
+          message: "Raffle created successfully!",
+          type: "is-success",
+          position: "is-bottom-right",
+          hasIcon: true
+        });
+      } catch (ex) {
+        this.$buefy.notification.open({
+          message: "An error has occurred while creating the Raffle.",
+          type: "is-danger",
+          position: "is-bottom-right",
+          hasIcon: true
+        });
+      } finally {
+        this.isLoading = false;
+      }
     }
   }
 }

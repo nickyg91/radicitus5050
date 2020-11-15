@@ -1,10 +1,13 @@
 <style lang="scss" scoped>
 @import "~bulma/sass/utilities/_all";
+.rad-image-main {
+  height: 16.25em;
+}
 </style>
 <template>
   <div class="section">
     <div class="has-text-centered">
-      <img src="@/assets/Logo_Radicitus_Black.png" />
+      <img class="rad-image-main" src="@/assets/Logo_Radicitus_Black.png" />
       <h1 class="is-size-1">Raffles</h1>
     </div>
     <div class="columns">
@@ -18,72 +21,76 @@
         <hr />
       </div>
     </div>
-    <div
-      v-bind:key="raffle.RaffleGuid"
-      v-for="raffle in rafflesToDisplay"
-      class="columns"
-    >
-      <div class="column is-offset-2 is-two-thirds">
-        <div class="box">
-          <div class="level">
-            <div class="level-left">
-              <div class="is-size-5 level-item">
-                <p class="has-text-weight-bold is-size-2">Name</p>
+    <div class="container">
+      <div class="columns is-multiline">
+        <div
+          v-bind:key="raffle.Id"
+          v-for="raffle in rafflesToDisplay"
+          class="column is-6"
+        >
+          <div class="box">
+            <div class="level">
+              <div class="level-left">
+                <div class="level-item">
+                  <p class="has-text-weight-bold is-size-5">Name</p>
+                </div>
+              </div>
+              <div class="level-right">
+                <div class="level-item">
+                  <p class="has-text-weight-bold is-size-5">Start Date</p>
+                </div>
+              </div>
+              <div class="level-right">
+                <div class="level-item">
+                  <p class="has-text-weight-bold is-size-5">End Date</p>
+                </div>
               </div>
             </div>
-            <div class="level-right">
-              <div class="is-size-5 level-item">
-                <p class="has-text-weight-bold is-size-2">Start Date</p>
+            <hr />
+            <div class="level">
+              <div class="level-left">
+                <div class="is-size-5 level-item">
+                  {{ raffle.RaffleName }}
+                </div>
+              </div>
+              <div class="level-right">
+                <div class="is-size-5 level-item">
+                  {{ raffle.StartDate | formatDate }}
+                </div>
+              </div>
+              <div class="level-right">
+                <div class="is-size-5 level-item">
+                  {{ raffle.EndDate | formatDate }}
+                </div>
               </div>
             </div>
-            <div class="level-right">
-              <div class="is-size-5 level-item">
-                <p class="has-text-weight-bold is-size-2">End Date</p>
+            <div class="mt-3">
+              <div class="has-text-centered">
+                <p class="is-size-4">Winner: {{ raffle.WinnerName }}</p>
               </div>
             </div>
-          </div>
-          <hr />
-          <div class="level">
-            <div class="level-left">
-              <div class="is-size-5 level-item">
-                {{ raffle.RaffleName }}
+            <div class="mt-3">
+              <div class="has-text-centered">
+                <p class="is-size-4">
+                  Winning Number: {{ raffle.WinningSquare }}
+                </p>
               </div>
             </div>
-            <div class="level-right">
-              <div class="is-size-5 level-item">
-                {{ raffle.StartDate | formatDate }}
+            <div class="mt-3">
+              <div class="has-text-centered">
+                <p class="is-size-4">
+                  Amount Won: {{ raffle.AmountWon / 2.0 }}
+                </p>
               </div>
             </div>
-            <div class="level-right">
-              <div class="is-size-5 level-item">
-                {{ raffle.EndDate | formatDate }}
-              </div>
+            <div class="mt-3">
+              <a
+                class="button is-large is-dark is-fullwidth"
+                @click="viewRaffle(raffle)"
+              >
+                View
+              </a>
             </div>
-          </div>
-          <div class="section">
-            <div class="has-text-centered">
-              <p class="is-size-2">Winner: {{ raffle.WinnerName }}</p>
-            </div>
-          </div>
-          <div class="section">
-            <div class="has-text-centered">
-              <p class="is-size-2">
-                Winning Number: {{ raffle.WinningSquare }}
-              </p>
-            </div>
-          </div>
-          <div class="section">
-            <div class="has-text-centered">
-              <p class="is-size-2">Amount Won: {{ raffle.AmountWon }}</p>
-            </div>
-          </div>
-          <div class="section">
-            <a
-              class="button is-large is-dark is-fullwidth"
-              @click="viewRaffle(raffle)"
-            >
-              View
-            </a>
           </div>
         </div>
       </div>
@@ -97,19 +104,16 @@ import RadRaffle from "@/models/raffle.model";
 import Component from "vue-class-component";
 import router from "@/router";
 
-@Component({
-  components: {
-    Raffles,
-  },
-})
+@Component
 export default class Raffles extends Vue {
   public raffles: RadRaffle[] = [];
   public rafflesToDisplay: RadRaffle[] = [];
   private _raffleService: RadRaffleService;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public searchRaffles(event: any) {
     const val = event.target.value.toLowerCase();
     if (event.target.value.length > 4) {
-      this.rafflesToDisplay = this.raffles.filter((raffle) => {
+      this.rafflesToDisplay = this.raffles.filter(raffle => {
         return raffle.RaffleName.toLowerCase().indexOf(val) > -1;
       });
     }
@@ -126,7 +130,7 @@ export default class Raffles extends Vue {
 
   public viewRaffle(selectedRaffle: RadRaffle) {
     this.$store.commit("setSelectedRaffle", selectedRaffle);
-    router.push(`/raffle/${selectedRaffle.RaffleGuid}`);
+    router.push(`/raffle/${selectedRaffle.Id}`);
   }
 }
 </script>

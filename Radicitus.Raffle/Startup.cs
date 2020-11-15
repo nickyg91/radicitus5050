@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Radicitus.Data.Contexts.Raffles;
+using Radicitus.Data.Contexts.Raffles.Implementations;
 using Radicitus.Raffle.Hubs;
 using Radicitus.Redis;
-using StackExchange.Redis;
 
 namespace Radicitus.Raffle
 {
@@ -25,16 +28,29 @@ namespace Radicitus.Raffle
             services.AddCors();
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             var redisConnection = "localhost";
-            var connectionMultiplexer = ConnectionMultiplexer.Connect(redisConnection);
-            services.AddSingleton<IRaffleRepository>(new RadRaffleRedisRepository(connectionMultiplexer));
-            services.AddSignalR().AddJsonProtocol(options =>
-            {
-                options.PayloadSerializerOptions.PropertyNamingPolicy = null;
-            });
+            services.AddSingleton<IRedisRaffleRepository>(new RadRaffleRedisRepository(redisConnection));
+            services.AddSignalR(options =>
+                {
+                    options.KeepAliveInterval = TimeSpan.FromSeconds(5);
+                })
+                .AddJsonProtocol(options =>
+                {
+                    options.PayloadSerializerOptions.PropertyNamingPolicy = null;
+                }).AddRedis(redisConnection);
             services.AddControllers().AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.PropertyNamingPolicy = null;
             });
+            var connectionString = Configuration.GetConnectionString("radicitus-5050");
+
+            services.AddDbContext<RadicitusDbContext>(optionsAction =>
+            {
+                optionsAction.UseNpgsql(connectionString, builder =>
+                {
+                    builder.MigrationsAssembly("Radicitus.Raffle");
+                });
+            });
+            services.AddScoped<RaffleRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -72,25 +72,23 @@ export default class ChooseWinner extends Vue {
 
   public async chooseWinner(raffle: RadRaffle) {
     this.isLoadingWinner = true;
-    this.winner = (
-      await this.raffleService.chooseWinner(raffle.RaffleGuid)
-    ).data;
+    this.winner = (await this.raffleService.chooseWinner(raffle.Id)).data;
     this.isLoadingWinner = false;
     if (this.winner.Name !== null) {
       raffle.WinnerName = this.winner.Name;
       raffle.WinningSquare = this.winner.Number;
-      this.$notification.open({
+      this.$buefy.notification.open({
         duration: 5000,
         message: `Huzzah! You have found a winner!`,
         position: "is-bottom-right",
-        type: "is-info",
+        type: "is-info"
       });
     } else {
-      this.$notification.open({
+      this.$buefy.notification.open({
         duration: 5000,
         message: `:( No winner found.`,
         position: "is-bottom-right",
-        type: "is-danger",
+        type: "is-danger"
       });
     }
   }

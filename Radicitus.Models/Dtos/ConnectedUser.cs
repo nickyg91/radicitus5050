@@ -1,4 +1,4 @@
-namespace Radicitus.Models
+namespace Radicitus.Models.Dtos
 {
     public class ConnectedUser
     {
