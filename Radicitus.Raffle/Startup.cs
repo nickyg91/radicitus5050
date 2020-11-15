@@ -51,6 +51,10 @@ namespace Radicitus.Raffle
                 });
             });
             services.AddScoped<RaffleRepository>();
+            services.AddSpaStaticFiles(options =>
+            {
+                options.RootPath = "wwwroot/radicitus-raffle/dist";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,28 +63,6 @@ namespace Radicitus.Raffle
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-            }
-            if (env.IsDevelopment())
-            {
-                app.UseCors(pol =>
-                {
-                    pol.AllowAnyOrigin()
-                        .AllowAnyHeader()
-                        .AllowAnyMethod()
-                        .AllowCredentials()
-                        .WithOrigins("http://localhost:8080");
-                });
-            }
-            else
-            {
-                app.UseCors(pol =>
-                {
-                    pol.AllowAnyOrigin()
-                        .AllowAnyHeader()
-                        .AllowAnyMethod()
-                        .AllowCredentials()
-                        .WithOrigins("https://radicitusguild.us", "https://health.radicitusguild.us");
-                });
             }
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
@@ -94,6 +76,17 @@ namespace Radicitus.Raffle
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
                 endpoints.MapHub<RaffleHub>("/rafflehub");
+            });
+
+            app.UseStaticFiles();
+            app.UseSpaStaticFiles();
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "wwwroot/radicitus-raffle";
+                if (env.IsDevelopment())
+                {
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:8080/");
+                }
             });
         }
     }

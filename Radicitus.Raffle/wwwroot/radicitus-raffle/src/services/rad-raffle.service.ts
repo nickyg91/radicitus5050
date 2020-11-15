@@ -22,7 +22,7 @@ export default class RadRaffleService {
     id: number,
     username: string
   ): Promise<AxiosResponse<number[]>> {
-    return await axios.get(`${this.url}/api/raffle/${id}/${username}/numbers`, {
+    return await axios.get(`/api/raffle/${id}/${username}/numbers`, {
       headers: this.headers
     });
   }
@@ -30,19 +30,19 @@ export default class RadRaffleService {
   public async getNumbersForRaffle(
     id: number
   ): Promise<AxiosResponse<RaffleNumberSelection[]>> {
-    return await axios.get(`${this.url}/api/raffle/numbers/${id}`, {
+    return await axios.get(`/api/raffle/numbers/${id}`, {
       headers: this.headers
     });
   }
 
   public async getRaffleById(id: number): Promise<AxiosResponse<RadRaffle>> {
-    return await axios.get(`${this.url}/api/raffle/${id}`, {
+    return await axios.get(`/api/raffle/${id}`, {
       headers: this.headers
     });
   }
 
   public async getRaffles(): Promise<AxiosResponse<RadRaffle[]>> {
-    return await axios.get(`${this.url}/api/raffle/raffles`, {
+    return await axios.get(`/api/raffle/raffles`, {
       headers: this.headers
     });
   }
@@ -50,7 +50,7 @@ export default class RadRaffleService {
   public async chooseWinner(
     id: number
   ): Promise<AxiosResponse<RaffleNumberSelection>> {
-    return await axios.get(`${this.url}/api/raffle/winner/${id}`, {
+    return await axios.get(`/api/raffle/winner/${id}`, {
       headers: this.headers
     });
   }

@@ -332,3 +332,4 @@ dist
 
 **/wwwroot/*/**/*.map
 **/wwwroot/*/**/*.js
+**/wwwroot/*/**/*.js.map
