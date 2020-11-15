@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Radicitus.Data.Contexts.Raffles;
@@ -9,9 +10,10 @@ using Radicitus.Data.Contexts.Raffles;
 namespace Radicitus.Raffle.Migrations
 {
     [DbContext(typeof(RadicitusDbContext))]
-    partial class RadicitusDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201115195825_ForeignKeyFix")]
+    partial class ForeignKeyFix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

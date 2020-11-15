@@ -77,18 +77,18 @@ export default class ChooseWinner extends Vue {
     if (this.winner.Name !== null) {
       raffle.WinnerName = this.winner.Name;
       raffle.WinningSquare = this.winner.Number;
-      this.$notification.open({
+      this.$buefy.notification.open({
         duration: 5000,
         message: `Huzzah! You have found a winner!`,
         position: "is-bottom-right",
-        type: "is-info",
+        type: "is-info"
       });
     } else {
-      this.$notification.open({
+      this.$buefy.notification.open({
         duration: 5000,
         message: `:( No winner found.`,
         position: "is-bottom-right",
-        type: "is-danger",
+        type: "is-danger"
       });
     }
   }

@@ -28,7 +28,6 @@ namespace Radicitus.Data.Contexts.Raffles.Entities
         public DateTime StartDateUtc { get; set; }
         [Column("end_date_utc")]
         public DateTime EndDateUtc { get; set; }
-        [ForeignKey("Id")]
         public ICollection<RaffleNumber> RaffleNumbers { get; set; }
     }
 }

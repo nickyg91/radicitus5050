@@ -27,6 +27,8 @@ namespace Radicitus.Raffle.Controllers
             raffle.DateCreatedUtc = DateTime.UtcNow;
 
             var raffleToCreate = ReferenceMapper.MapToNewInstance<RadicitusRaffle, RadRaffle, IRadRaffle>(raffle);
+            raffleToCreate.StartDateUtc = raffle.StartDateUtc.ToUniversalTime();
+            raffleToCreate.EndDateUtc = raffle.EndDateUtc.ToUniversalTime();
             _raffleRepo.Add(raffleToCreate);
             await _raffleRepo.SaveChangesAsync();
 

@@ -63,10 +63,7 @@
     <b-modal :can-cancel="false" :active.sync="isNameModalActive">
       <div class="box">
         <div class="has-text-centered">
-          <font-awesome-icon
-            class="is-size-1 has-text-danger"
-            icon="exclamation-circle"
-          ></font-awesome-icon>
+          <i class="is-size-1 has-text-danger fas fa-exclamation-circle"></i>
           <p class="is-size-3">Looks like we don't know you?</p>
         </div>
         <div class="has-text-centered">
@@ -97,7 +94,7 @@
     </b-modal>
     <div class="toggle-slideout">
       <button @click="showSlideout" class="button is-info">
-        <font-awesome-icon icon="users"></font-awesome-icon>
+        <i class="fa fa-users"></i>
       </button>
     </div>
     <div
@@ -124,18 +121,16 @@ import Raffle from "@/models/raffle.model";
 import RadRaffleService from "@/services/rad-raffle.service";
 import { HubConnection, HubConnectionBuilder } from "@aspnet/signalr";
 import UserConnection from "@/models/raffle-hub-user.model";
-import ToastConfig from "buefy";
 import RaffleNumberSelection from "../models/raffle-number-selection.model";
 @Component({
   components: {
-    RaffleView,
-    Square,
-  },
+    Square
+  }
 })
 export default class RaffleView extends Vue {
   public isSlideoutShown = false;
   public raffle!: Raffle;
-  public squares = Array.from(Array(100).keys()).map((x) => x + 1);
+  public squares = Array.from(Array(100).keys()).map(x => x + 1);
   public totalSquares = 100;
   public numberOfRows = 10;
   public squaresPerRow = 10;
@@ -152,7 +147,6 @@ export default class RaffleView extends Vue {
   }
 
   public async created() {
-    const vueContext = this;
     this.raffle = this.$store.getters.selectedRaffle;
     if (this.raffle.Id == null) {
       this.raffle = (
@@ -161,24 +155,25 @@ export default class RaffleView extends Vue {
         )
       ).data;
     }
+  }
+
+  public beforeMount() {
     const url = process.env.VUE_APP_API_URL;
     this.hubConnection = new HubConnectionBuilder()
       .withUrl(`${url}/rafflehub?raffleId=${this.$route.params.raffleId}`)
       .build();
-    this.hubConnection.on("SendNumbers", (result) => {
-      const childSquare = vueContext.$children.filter(
-        (x) => x.$props.squareNumber === result.Number
+    this.hubConnection.on("SendNumbers", result => {
+      const childSquare = this.$children.filter(
+        x => x.$props.squareNumber === result.Number
       )[0];
       if (result.IsRemoved) {
-        const idxOfRemovedNumber = vueContext.takenSquares.indexOf(
-          result.Number
-        );
-        vueContext.takenSquares.splice(idxOfRemovedNumber, 1);
+        const idxOfRemovedNumber = this.takenSquares.indexOf(result.Number);
+        this.takenSquares.splice(idxOfRemovedNumber, 1);
         childSquare.$set(childSquare, "squareName", "");
         childSquare.$el.classList.remove("selected");
       } else {
         childSquare.$set(childSquare, "squareName", result.Name);
-        vueContext.takenSquares.push(result.Number);
+        this.takenSquares.push(result.Number);
         childSquare.$el.classList.add("selected");
       }
     });
@@ -191,71 +186,69 @@ export default class RaffleView extends Vue {
     this.hubConnection.on("UserConnected", (result: UserConnection) => {
       const nameExists =
         this.joinedUsers
-          .map((x) => x.Name.toLowerCase())
+          .map(x => x.Name.toLowerCase())
           .indexOf(this.squareName.toLowerCase()) > -1;
       if (nameExists) {
         return;
       }
       this.joinedUsers.push(result);
-      this.$toast.open({
+      this.$buefy.toast.open({
         position: "is-bottom",
         type: "is-info",
-        message: `${result.Name} has joined.`,
+        message: `${result.Name} has joined.`
       });
     });
     this.hubConnection.on("UserLeft", (result: UserConnection) => {
       const index = this.joinedUsers
-        .map((x) => x.ConnectionId)
+        .map(x => x.ConnectionId)
         .indexOf(result.ConnectionId);
       this.joinedUsers.splice(index, 1);
-      this.$toast.open({
+      this.$buefy.toast.open({
         position: "is-bottom",
         type: "is-warning",
-        message: `${result.Name} has left.`,
+        message: `${result.Name} has left.`
       });
     });
-    this.hubConnection.start();
-  }
 
-  public async mounted() {
-    const vueContext = this;
-    const takenRaffleNumbers = await this.raffleService.getNumbersForRaffle(
-      (this.$route.params.raffleId as unknown) as number
-    );
     const cookie: RaffleCookie = this.$cookies.get(
       `raffle_${this.$route.params.raffleId}`
     );
+    this.hubConnection.start().then(async result => {
+      if (cookie) {
+        // get numbers for this user and set their name automatically.
+        this.squareName = cookie.Name;
+        this.$store.commit("setUser", this.squareName);
+        this.hubConnection.invoke("UserConnectedToRaffle", cookie.Name);
+        const userNumbers = await this.raffleService.getRaffleNumbersForUser(
+          (this.$route.params.raffleId as unknown) as number,
+          cookie.Name
+        );
+        if (userNumbers) {
+          this.selectedSquares = userNumbers.data;
+        }
+      } else {
+        const hasUsernameBeenSet = this.$store.getters.currentUser;
+        if (!hasUsernameBeenSet) {
+          this.isNameModalActive = true;
+        }
+      }
+    });
+  }
+
+  public async mounted() {
+    const takenRaffleNumbers = await this.raffleService.getNumbersForRaffle(
+      (this.$route.params.raffleId as unknown) as number
+    );
     takenRaffleNumbers.data.forEach((raffle: RaffleNumberSelection) => {
-      const childSquare = vueContext.$children.filter(
-        (x) => x.$props.squareNumber === raffle.Number
+      const childSquare = this.$children.filter(
+        x => x.$props.squareNumber === raffle.Number
       )[0];
       if (childSquare) {
         childSquare.$set(childSquare, "squareName", raffle.Name);
-        vueContext.takenSquares.push(raffle.Number);
+        this.takenSquares.push(raffle.Number);
         childSquare.$el.classList.add("selected");
       }
     });
-
-    if (cookie) {
-      // get numbers for this user and set their name automatically.
-      this.squareName = cookie.Name;
-      this.$store.commit("setUser", this.squareName);
-      this.hubConnection.invoke("UserConnectedToRaffle", cookie.Name);
-      const userNumbers = await this.raffleService.getRaffleNumbersForUser(
-        (this.$route.params.raffleId as unknown) as number,
-        cookie.Name
-      );
-      if (userNumbers) {
-        vueContext.selectedSquares = userNumbers.data.map((x: any) =>
-          parseInt(x)
-        );
-      }
-    } else {
-      const hasUsernameBeenSet = this.$store.getters.currentUser;
-      if (!hasUsernameBeenSet) {
-        this.isNameModalActive = true;
-      }
-    }
   }
 
   public squareClicked(square: Square) {
@@ -279,7 +272,7 @@ export default class RaffleView extends Vue {
       this.hubConnection.invoke("BroadcastSelectedNumbersToRaffleGroup", {
         Name: this.squareName,
         Number: square.$props.squareNumber,
-        IsRemoved: true,
+        IsRemoved: true
       });
     } else if (
       !isSquareAlreadyTakenBySomeoneElse &&
@@ -291,7 +284,7 @@ export default class RaffleView extends Vue {
       this.hubConnection.invoke("BroadcastSelectedNumbersToRaffleGroup", {
         Name: this.squareName,
         Number: square.$props.squareNumber,
-        IsRemoved: false,
+        IsRemoved: false
       });
     }
   }
@@ -299,13 +292,13 @@ export default class RaffleView extends Vue {
   public acceptName() {
     const nameExists =
       this.joinedUsers
-        .map((x) => x.Name.toLowerCase())
+        .map(x => x.Name.toLowerCase())
         .indexOf(this.squareName.toLowerCase()) > -1;
     if (nameExists) {
-      this.$toast.open({
+      this.$buefy.toast.open({
         position: "is-bottom",
         type: "is-danger",
-        message: `Sorry, but ${this.squareName} has already been taken.`,
+        message: `Sorry, but ${this.squareName} has already been taken.`
       });
       return;
     }
@@ -326,5 +319,3 @@ export default class RaffleView extends Vue {
   }
 }
 </script>
-
-

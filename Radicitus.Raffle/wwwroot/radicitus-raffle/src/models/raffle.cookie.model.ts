@@ -1,5 +1,5 @@
-import Raffle from '@/models/raffle.model';
+import Raffle from "@/models/raffle.model";
 export default class RaffleCookie {
-    public Raffle: Raffle;
-    public Name: string;
+  public Raffle: Raffle;
+  public Name: string;
 }

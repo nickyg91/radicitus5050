@@ -82,7 +82,7 @@
   </div>
 </template>
 <script lang="ts">
-import { Inject, Vue, Component } from "vue-property-decorator";
+import { Vue, Component } from "vue-property-decorator";
 import RadRaffle from "@/models/raffle.model";
 import RadRaffleService from "@/services/rad-raffle.service";
 @Component
@@ -101,21 +101,21 @@ export default class CreateRaffle extends Vue {
         this.isLoading = true;
         const resp = await this.radServices.createRaffle(this.raffle);
         this.raffle.Id = resp.data.Id;
-        this.$notification.open({
-          message: 'Raffle created successfully!',
-          type: 'success',
-          position: 'is-bottom-right',
+        this.$buefy.notification.open({
+          message: "Raffle created successfully!",
+          type: "is-success",
+          position: "is-bottom-right",
           hasIcon: true
         });
       } catch (ex) {
-      } finally {
-        this.isLoading = false;
-        this.$notification.open({
-          message: 'An error has occurred while creating the Raffle.',
-          type: 'danger',
-          position: 'is-bottom-right',
+        this.$buefy.notification.open({
+          message: "An error has occurred while creating the Raffle.",
+          type: "is-danger",
+          position: "is-bottom-right",
           hasIcon: true
         });
+      } finally {
+        this.isLoading = false;
       }
     }
   }

@@ -15,6 +15,8 @@ namespace Radicitus.Models.Dtos
         public int? WinningSquare { get; set; }
         public DateTime StartDateUtc { get; set; }
         public DateTime EndDateUtc { get; set; }
+        public DateTime StartDate => StartDateUtc.ToLocalTime();
+        public DateTime EndDate => EndDateUtc.ToLocalTime();
         public List<RaffleNumber> RaffleNumbers { get; set; }
     }
 }

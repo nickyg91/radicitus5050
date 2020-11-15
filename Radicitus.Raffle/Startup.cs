@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
@@ -28,7 +29,10 @@ namespace Radicitus.Raffle
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             var redisConnection = "localhost";
             services.AddSingleton<IRedisRaffleRepository>(new RadRaffleRedisRepository(redisConnection));
-            services.AddSignalR()
+            services.AddSignalR(options =>
+                {
+                    options.KeepAliveInterval = TimeSpan.FromSeconds(5);
+                })
                 .AddJsonProtocol(options =>
                 {
                     options.PayloadSerializerOptions.PropertyNamingPolicy = null;
