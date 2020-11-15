@@ -9,9 +9,9 @@ namespace Radicitus.Redis
     {
         private readonly ConnectionMultiplexer _connection;
 
-        public RadRaffleRedisRepository(ConnectionMultiplexer connection)
+        public RadRaffleRedisRepository(string connection)
         {
-            _connection = connection;
+            _connection = ConnectionMultiplexer.Connect(connection);
         }
 
         public IEnumerable<RaffleNumberSelection> GetRadRafflesByRaffleGuid(string guid)

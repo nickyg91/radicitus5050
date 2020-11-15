@@ -7,10 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Radicitus.Data.Contexts.Raffles;
 using Radicitus.Data.Contexts.Raffles.Implementations;
-using Radicitus.Data.Contexts.Raffles.Interfaces;
 using Radicitus.Raffle.Hubs;
 using Radicitus.Redis;
-using StackExchange.Redis;
 
 namespace Radicitus.Raffle
 {
@@ -29,12 +27,12 @@ namespace Radicitus.Raffle
             services.AddCors();
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             var redisConnection = "localhost";
-            var connectionMultiplexer = ConnectionMultiplexer.Connect(redisConnection);
-            services.AddSingleton<IRedisRaffleRepository>(new RadRaffleRedisRepository(connectionMultiplexer));
-            services.AddSignalR().AddJsonProtocol(options =>
-            {
-                options.PayloadSerializerOptions.PropertyNamingPolicy = null;
-            });
+            services.AddSingleton<IRedisRaffleRepository>(new RadRaffleRedisRepository(redisConnection));
+            services.AddSignalR()
+                .AddJsonProtocol(options =>
+                {
+                    options.PayloadSerializerOptions.PropertyNamingPolicy = null;
+                }).AddRedis(redisConnection);
             services.AddControllers().AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.PropertyNamingPolicy = null;
@@ -48,7 +46,6 @@ namespace Radicitus.Raffle
                     builder.MigrationsAssembly("Radicitus.Raffle");
                 });
             });
-
             services.AddScoped<RaffleRepository>();
         }
 

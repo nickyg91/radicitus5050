@@ -197,7 +197,7 @@ export default class RaffleView extends Vue {
         return;
       }
       this.joinedUsers.push(result);
-      this.$buefy.toast.open({
+      this.$toast.open({
         position: "is-bottom",
         type: "is-info",
         message: `${result.Name} has joined.`,
@@ -208,7 +208,7 @@ export default class RaffleView extends Vue {
         .map((x) => x.ConnectionId)
         .indexOf(result.ConnectionId);
       this.joinedUsers.splice(index, 1);
-      this.$buefy.toast.open({
+      this.$toast.open({
         position: "is-bottom",
         type: "is-warning",
         message: `${result.Name} has left.`,
@@ -302,7 +302,7 @@ export default class RaffleView extends Vue {
         .map((x) => x.Name.toLowerCase())
         .indexOf(this.squareName.toLowerCase()) > -1;
     if (nameExists) {
-      this.$buefy.toast.open({
+      this.$toast.open({
         position: "is-bottom",
         type: "is-danger",
         message: `Sorry, but ${this.squareName} has already been taken.`,
