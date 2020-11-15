@@ -1,10 +1,10 @@
 version: '3.8'
 services:
-  redis:
+  radraffle-redis:
     container_name: raffle-redis
     restart: unless-stopped
     image: redis
-  postgres:
+  radraffle-sql:
     container_name: raffle-postgres
     restart: unless-stopped
     image: postgres
@@ -21,11 +21,8 @@ services:
     volumes:
       - "raffle_appsettings:/opt/appsettings/radicitus-raffle"
     depends_on:
-      - postgres
-      - redis
-    links:
-      - "radraffle-sql:postgres"
-      - "radraffle-redis:redis"
+      - radraffle-sql
+      - radraffle-redis
 volumes:
   raffle_postgres: {}
   raffle_appsettings: {}
