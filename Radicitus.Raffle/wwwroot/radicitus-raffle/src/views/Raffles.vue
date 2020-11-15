@@ -78,7 +78,9 @@
             </div>
             <div class="mt-3">
               <div class="has-text-centered">
-                <p class="is-size-4">Amount Won: {{ raffle.AmountWon }}</p>
+                <p class="is-size-4">
+                  Amount Won: {{ raffle.AmountWon / 2.0 }}
+                </p>
               </div>
             </div>
             <div class="mt-3">
