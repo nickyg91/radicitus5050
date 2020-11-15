@@ -17,6 +17,7 @@ namespace Radicitus.Raffle
     {
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
+            Console.WriteLine($"------------------Environment: {env.EnvironmentName}-----------------------");
             Configuration = configuration;
             if (env.IsDevelopment())
             {
@@ -37,9 +38,10 @@ namespace Radicitus.Raffle
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors();
-            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             var redisConnection = Configuration.GetConnectionString("redis");
+            var connectionString = Configuration.GetConnectionString("radicitus-5050");
+            Console.WriteLine($"Postgres Connection String: {connectionString}");
+            Console.Write($"Redis Connection String: {redisConnection}");
             services.AddSingleton<IRedisRaffleRepository>(new RadRaffleRedisRepository(redisConnection));
             services.AddSignalR(options =>
                 {
@@ -53,7 +55,6 @@ namespace Radicitus.Raffle
             {
                 options.JsonSerializerOptions.PropertyNamingPolicy = null;
             });
-            var connectionString = Configuration.GetConnectionString("radicitus-5050");
 
             services.AddDbContext<RadicitusDbContext>(optionsAction =>
             {
