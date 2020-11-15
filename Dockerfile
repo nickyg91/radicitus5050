@@ -13,7 +13,7 @@ RUN dotnet restore "app/Radicitus.Raffle/Radicitus.Raffle.csproj"
 COPY . .
 RUN apt-get update -yq 
 RUN apt-get install curl gnupg -yq 
-RUN curl -sL https://deb.nodesource.com/setup_15.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
 RUN apt-get install -y nodejs
 RUN npm rebuild node-sass --force
 #RUN dotnet tool install --global dotnet-ef
