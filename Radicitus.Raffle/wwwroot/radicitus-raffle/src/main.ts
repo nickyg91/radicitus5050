@@ -23,7 +23,8 @@ Vue.use(VeeValidate, {
 Vue.filter("formatDate", (value: any) => {
   if (value) {
     const d = new Date(value);
-    return `${d.getDay()}/${d.getMonth()}/${d.getFullYear()}`;
+    console.log(d);
+    return `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`;
   }
 });
 

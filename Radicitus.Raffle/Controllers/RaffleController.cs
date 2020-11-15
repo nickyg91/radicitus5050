@@ -85,7 +85,11 @@ namespace Radicitus.Raffle.Controllers
             raffle.WinningSquare = winner.Number;
             _raffleRepo.Update(raffle);
             await _raffleRepo.SaveChangesAsync();
-            return Ok(winner);
+            return Ok(new RaffleNumberSelection
+            {
+                Name = winner.Name,
+                Number = winner.Number
+            });
         }
 
         [HttpGet("{id}")]
