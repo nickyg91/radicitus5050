@@ -13,6 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Radicitus.Data", "Radicitus
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DF60187B-50A9-4D62-B0F3-79945104729F}"
 	ProjectSection(SolutionItems) = preProject
+		docker_compose.yml = docker_compose.yml
 		Dockerfile = Dockerfile
 	EndProjectSection
 EndProject

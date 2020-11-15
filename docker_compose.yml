@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  redis:
+    container_name: raffle-redis
+    restart: unless-stopped
+    image: redis
+    ports:
+      - "6379:6379"
+  postgres:
+    container_name: raffle-postgres
+    restart: unless-stopped
+    image: postgres
+    volumes:
+      - "raffle_postgres:/var/lib/postgresql/data"
+    ports:
+      - "5432:5432"
+    env_file:
+      "/opt/appsettings/envir/raffle.env"
+  radicitus-raffle:
+    container_name: radicitus-raffle
+    restart: unless-stopped
+    image: radicitus-raffle:1.0
+    ports:
+      - "8080:5000"
+    volumes:
+      - "raffle_appsettings:/opt/appsettings/radicitus-raffle"
+volumes:
+  raffle_postgres: {}
+  raffle_appsettings: {}

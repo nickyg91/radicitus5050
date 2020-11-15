@@ -14,19 +14,6 @@ namespace Radicitus.Redis
             _connection = ConnectionMultiplexer.Connect(connection);
         }
 
-        public IEnumerable<RaffleNumberSelection> GetRadRafflesByRaffleGuid(string guid)
-        {
-            var numbers = _connection.GetDatabase().HashGetAll($"{guid}:numbers");
-            foreach (var number in numbers)
-            {
-                yield return new RaffleNumberSelection
-                {
-                    Name = number.Value,
-                    Number = int.Parse(number.Name)
-                };
-            }
-        }
-
         public async Task AddConnectedUserToSet(string connectionId, string raffleId, string user)
         {
             await _connection.GetDatabase().StringSetAsync($"{connectionId}:{raffleId}", user);
