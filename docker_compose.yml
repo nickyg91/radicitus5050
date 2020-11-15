@@ -24,6 +24,12 @@ services:
       - "8080:5000"
     volumes:
       - "raffle_appsettings:/opt/appsettings/radicitus-raffle"
+    depends_on:
+      - postgres
+      - redis
+    links:
+      - "radraffle-sql:postgres"
+      - "radraffle-redis:redis"
 volumes:
   raffle_postgres: {}
   raffle_appsettings: {}

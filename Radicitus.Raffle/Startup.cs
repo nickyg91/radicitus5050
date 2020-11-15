@@ -39,7 +39,7 @@ namespace Radicitus.Raffle
         {
             services.AddCors();
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
-            var redisConnection = "localhost";
+            var redisConnection = Configuration.GetConnectionString("redis");
             services.AddSingleton<IRedisRaffleRepository>(new RadRaffleRedisRepository(redisConnection));
             services.AddSignalR(options =>
                 {
