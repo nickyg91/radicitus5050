@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  radraffle-redis:
+    container_name: raffle-redis
+    restart: unless-stopped
+    image: redis
+  radraffle-sql:
+    container_name: raffle-postgres
+    restart: unless-stopped
+    image: postgres
+    volumes:
+      - "raffle_postgres:/var/lib/postgresql/data"
+    env_file:
+      "/opt/appsettings/envir/raffle.env"
+  radicitus-raffle:
+    container_name: radicitus-raffle
+    restart: unless-stopped
+    image: radicitus-raffle:1.0
+    ports:
+      - "8080:80"
+    volumes:
+      - "/opt:/opt"
+    depends_on:
+      - radraffle-sql
+      - radraffle-redis
+    command: ["dotnet", "ef", "database update"]
+volumes:
+  raffle_postgres:
