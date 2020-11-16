@@ -97,6 +97,15 @@ namespace Radicitus.Raffle
                     spa.UseProxyToSpaDevelopmentServer("http://localhost:8080/");
                 }
             });
+
+            using var serviceScope = app.ApplicationServices
+                .GetRequiredService<IServiceScopeFactory>()
+                .CreateScope();
+            using var context = serviceScope.ServiceProvider.GetService<RadicitusDbContext>();
+            if (context != null && env.IsProduction())
+            {
+                context.Database.Migrate();
+            }
         }
     }
 }
