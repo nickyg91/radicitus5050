@@ -23,5 +23,6 @@ services:
     depends_on:
       - radraffle-sql
       - radraffle-redis
+    command: ["dotnet", "ef", "database update"]
 volumes:
   raffle_postgres:

@@ -32,7 +32,7 @@ namespace Radicitus.Data.Contexts.Raffles
             modelBuilder.HasDefaultSchema("rad");
             base.OnModelCreating(modelBuilder);
         }
-
+        
         public DbSet<RadRaffle> Raffles { get; set; }
         public DbSet<RaffleNumber> RaffleNumbers { get; set; }
     }
