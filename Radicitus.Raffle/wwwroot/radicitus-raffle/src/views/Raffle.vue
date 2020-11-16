@@ -158,9 +158,8 @@ export default class RaffleView extends Vue {
   }
 
   public beforeMount() {
-    const url = process.env.VUE_APP_API_URL;
     this.hubConnection = new HubConnectionBuilder()
-      .withUrl(`${url}/rafflehub?raffleId=${this.$route.params.raffleId}`)
+      .withUrl(`/rafflehub?raffleId=${this.$route.params.raffleId}`)
       .build();
     this.hubConnection.on("SendNumbers", result => {
       const childSquare = this.$children.filter(

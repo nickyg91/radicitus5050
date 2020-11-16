@@ -2,7 +2,6 @@ import axios, { AxiosResponse } from "axios";
 import RadRaffle from "@/models/raffle.model";
 import RaffleNumberSelection from "@/models/raffle-number-selection.model";
 export default class RadRaffleService {
-  public url: any = process.env.VUE_APP_API_URL;
   private headers = {
     "Access-Control-Allow-Headers": "x-requested-with"
   };
@@ -10,7 +9,7 @@ export default class RadRaffleService {
     raffle: RadRaffle
   ): Promise<AxiosResponse<RadRaffle>> {
     return await axios.post<RadRaffle>(
-      `${this.url}/api/raffle/create`,
+      `/api/raffle/create`,
       raffle,
       {
         headers: this.headers
