@@ -19,10 +19,9 @@ services:
     ports:
       - "8080:5000"
     volumes:
-      - "raffle_appsettings:/opt/appsettings/radicitus-raffle"
+      - "/opt:/opt"
     depends_on:
       - radraffle-sql
       - radraffle-redis
 volumes:
   raffle_postgres:
-  raffle_appsettings:
