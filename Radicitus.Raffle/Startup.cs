@@ -78,10 +78,6 @@ namespace Radicitus.Raffle
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
-            {
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-            });
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
