@@ -33,5 +33,10 @@ namespace Radicitus.Data.Contexts.Raffles.Implementations
         {
             return Context.RaffleNumbers.Where(x => x.Id == id && x.Name == name);
         }
+
+        public IEnumerable<RadRaffle> GetRafflesByAmountAndPage(int amount, int page)
+        {
+            return Context.Raffles.Skip(amount * (page - 1)).Take(amount);
+        }
     }
 }

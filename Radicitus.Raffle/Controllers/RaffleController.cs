@@ -21,6 +21,7 @@ namespace Radicitus.Raffle.Controllers
         {
             _raffleRepo = raffleRepo;
         }
+
         [HttpPost("create")]
         public async Task<IActionResult> CreateRaffle(RadicitusRaffle raffle)
         {
@@ -79,7 +80,6 @@ namespace Radicitus.Raffle.Controllers
                     Number = randomInteger
                 });
             }
-            var totalWinnings = (raffle.SquareWorthAmount * raffleNumbers.Count) / 2;
             raffle.AmountWon = raffle.SquareWorthAmount * raffleNumbers.Count;
             raffle.WinnerName = winner.Name;
             raffle.WinningSquare = winner.Number;
@@ -106,6 +106,13 @@ namespace Radicitus.Raffle.Controllers
             var raffles = _raffleRepo.GetRaffles().ToList();
             var mappedRaffles = raffles.Select(ReferenceMapper.MapToNewInstance<RadRaffle, RadicitusRaffle, IRadRaffle>);
             return Ok(mappedRaffles);
+        }
+
+        [HttpGet("raffles/{amount:int}/page/{page:int}")]
+        public IActionResult GetPagedRaffles(int amount, int page)
+        {
+            var raffles = _raffleRepo.GetRafflesByAmountAndPage(amount, page).ToList().Select(ReferenceMapper.MapToNewInstance<RadRaffle, RadicitusRaffle, IRadRaffle>);
+            return Ok(raffles);
         }
     }
 }
