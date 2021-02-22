@@ -123,7 +123,7 @@ export default class Raffles extends Vue {
   }
 
   public async mounted() {
-    this._raffleService = new RadRaffleService();
+    this._raffleService = new RadRaffleService(this.$http);
     this.raffles = (await this._raffleService.getRaffles()).data;
     this.rafflesToDisplay = this.raffles;
   }

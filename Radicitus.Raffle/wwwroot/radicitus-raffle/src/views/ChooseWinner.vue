@@ -65,7 +65,7 @@ export default class ChooseWinner extends Vue {
   public winner: RaffleNumberSelection = new RaffleNumberSelection();
   public raffles: RadRaffle[] = [];
   public isLoadingWinner = false;
-  private raffleService: RadRaffleService = new RadRaffleService();
+  private raffleService: RadRaffleService = new RadRaffleService(this.$http);
   public async mounted() {
     this.raffles = (await this.raffleService.getRaffles()).data;
   }

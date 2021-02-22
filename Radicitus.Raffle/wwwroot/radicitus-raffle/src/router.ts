@@ -1,10 +1,10 @@
 import Vue from "vue";
 import Router from "vue-router";
 import RaffleView from "@/views/Raffle.vue";
-import CreateRaffle from "@/views/CreateRaffle.vue";
 import Raffles from "@/views/Raffles.vue";
 import ChooseWinner from "@/views/ChooseWinner.vue";
 import NotFound from "@/views/NotFound.vue";
+import Dashboard from "@/views/Dashboard.vue";
 Vue.use(Router);
 
 export default new Router({
@@ -17,11 +17,6 @@ export default new Router({
       component: RaffleView
     },
     {
-      path: "/raffle/guild/create",
-      name: "create",
-      component: CreateRaffle
-    },
-    {
       path: "/raffles",
       name: "raffles",
       component: Raffles
@@ -30,6 +25,11 @@ export default new Router({
       path: "/choose/winner",
       name: "choosewinner",
       component: ChooseWinner
+    },
+    {
+      path: "/raffles/dashboard",
+      name: "rafflesdashboard",
+      component: Dashboard
     },
     {
       path: "/",

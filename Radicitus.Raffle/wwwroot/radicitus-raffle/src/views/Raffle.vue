@@ -141,7 +141,7 @@ export default class RaffleView extends Vue {
   public takenSquares = new Array<number>();
   public hubConnection: HubConnection;
   public joinedUsers = new Array<UserConnection>();
-  private raffleService = new RadRaffleService();
+  private raffleService = new RadRaffleService(this.$http);
   public showSlideout() {
     this.isSlideoutShown = !this.isSlideoutShown;
   }

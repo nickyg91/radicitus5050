@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Radicitus.Data.Contexts.Raffles.Entities;
@@ -21,6 +22,7 @@ namespace Radicitus.Raffle.Controllers
         {
             _raffleRepo = raffleRepo;
         }
+
         [HttpPost("create")]
         public async Task<IActionResult> CreateRaffle(RadicitusRaffle raffle)
         {
@@ -79,7 +81,6 @@ namespace Radicitus.Raffle.Controllers
                     Number = randomInteger
                 });
             }
-            var totalWinnings = (raffle.SquareWorthAmount * raffleNumbers.Count) / 2;
             raffle.AmountWon = raffle.SquareWorthAmount * raffleNumbers.Count;
             raffle.WinnerName = winner.Name;
             raffle.WinningSquare = winner.Number;
@@ -106,6 +107,26 @@ namespace Radicitus.Raffle.Controllers
             var raffles = _raffleRepo.GetRaffles().ToList();
             var mappedRaffles = raffles.Select(ReferenceMapper.MapToNewInstance<RadRaffle, RadicitusRaffle, IRadRaffle>);
             return Ok(mappedRaffles);
+        }
+
+        [HttpGet("raffles/{amount:int}/page/{page:int}")]
+        public async Task<IActionResult> GetPagedRaffles(int amount, int page)
+        {
+            var raffles = _raffleRepo.GetRafflesByAmountAndPage(amount, page).ToList().Select(ReferenceMapper.MapToNewInstance<RadRaffle, RadicitusRaffle, IRadRaffle>);
+            var totalRaffles = await _raffleRepo.TotalRaffles();
+            return Ok(new
+            {
+                TotalRaffles = totalRaffles,
+                Raffles = raffles
+            });
+        }
+
+        [HttpDelete("remove/{id:int}")]
+        public async Task<IActionResult> RemoveRaffle(int id)
+        {
+            await _raffleRepo.RemoveRaffle(id);
+            await _raffleRepo.SaveChangesAsync();
+            return Ok();
         }
     }
 }

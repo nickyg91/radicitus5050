@@ -7,6 +7,7 @@ import "bulma/css/bulma.css";
 import '@fortawesome/fontawesome-free/css/all.css'
 import VeeValidate from "vee-validate";
 import VueCookies from "vue-cookies";
+import axios from "axios";
 
 Vue.use(Buefy, {
   defaultIconPack: "fas"
@@ -27,6 +28,14 @@ Vue.filter("formatDate", (value: any) => {
     return `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`;
   }
 });
+
+const axiosConfig = axios.create({
+  headers: {
+    "content-type": "application/json"
+  }
+});
+
+Vue.prototype.$http = axiosConfig;
 
 Vue.config.productionTip = false;
 new Vue({

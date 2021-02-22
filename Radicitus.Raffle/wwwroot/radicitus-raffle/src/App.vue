@@ -77,4 +77,11 @@ $link-focus-border: $primary;
 @import "~bulma/bulma";
 @import "~buefy/src/scss/buefy";
 @import "@/styles/styles.scss";
+
+@media screen and (max-width: 768px) {
+  .button.is-fullwidth-mobile {
+    display: flex;
+    width: 100%;
+  }
+}
 </style>
