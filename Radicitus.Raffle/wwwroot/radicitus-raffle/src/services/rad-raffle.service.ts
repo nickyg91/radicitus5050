@@ -1,7 +1,11 @@
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosInstance, AxiosResponse } from "axios";
 import RadRaffle from "@/models/raffle.model";
 import RaffleNumberSelection from "@/models/raffle-number-selection.model";
+import PaginatedRaffle from "@/models/paginated-raffle.model";
 export default class RadRaffleService {
+
+  constructor(private http: AxiosInstance) { }
+
   private headers = {
     "Access-Control-Allow-Headers": "x-requested-with"
   };
@@ -52,5 +56,13 @@ export default class RadRaffleService {
     return await axios.get(`/api/raffle/winner/${id}`, {
       headers: this.headers
     });
+  }
+
+  public async getPaginatedRaffles(pageNumber: number, amount: number): Promise<PaginatedRaffle> {
+    return await (await axios.get(`/api/raffle/raffles/${amount}/page/${pageNumber}`)).data;
+  }
+
+  public async deleteRaffle(id: number) {
+    return await (await axios.delete(`/api/raffle/remove/${id}`)).data  
   }
 }

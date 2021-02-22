@@ -38,5 +38,18 @@ namespace Radicitus.Data.Contexts.Raffles.Implementations
         {
             return Context.Raffles.Skip(amount * (page - 1)).Take(amount);
         }
+
+        public async Task<int> TotalRaffles()
+        {
+            return await Context.Raffles.CountAsync();
+        }
+
+        public async Task RemoveRaffle(int id)
+        {
+            var raffle = await Context.Raffles
+                .Include(x => x.RaffleNumbers)
+                .SingleOrDefaultAsync(x => x.Id == id);
+            Context.Raffles.Remove(raffle);
+        }
     }
 }

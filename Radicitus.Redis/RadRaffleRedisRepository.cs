@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Radicitus.Models.Dtos;
 using StackExchange.Redis;
@@ -16,7 +17,8 @@ namespace Radicitus.Redis
 
         public async Task AddConnectedUserToSet(string connectionId, string raffleId, string user)
         {
-            await _connection.GetDatabase().StringSetAsync($"{connectionId}:{raffleId}", user);
+            await _connection.GetDatabase().StringSetAsync($"{connectionId}:{raffleId}", user, TimeSpan.FromDays(1));
+            
             await _connection.GetDatabase().SetAddAsync($"Connections:{raffleId}", connectionId);
         }
 
